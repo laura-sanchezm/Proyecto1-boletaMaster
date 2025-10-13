@@ -48,6 +48,56 @@ public class TiqueteSimple extends Tiquete {
 	public void aplicarOferta() {
 		
 	}
+
+
+
+	public Evento getEvento() {
+		return evento;
+	}
+
+
+
+	public void setEvento(Evento evento) {
+		this.evento = evento;
+	}
+
+
+
+	public Localidad getLocalidad() {
+		return localidad;
+	}
+
+
+
+	public void setLocalidad(Localidad localidad) {
+		this.localidad = localidad;
+	}
+
+
+
+	public boolean isEnumerado() {
+		return enumerado;
+	}
+
+
+
+	public void setEnumerado(boolean enumerado) {
+		this.enumerado = enumerado;
+	}
+
+
+
+	public int getNumAsiento() {
+		return numAsiento;
+	}
+
+
+
+	public void setNumAsiento(int numAsiento) {
+		this.numAsiento = numAsiento;
+	}
+	
+	
 	
 	
 }

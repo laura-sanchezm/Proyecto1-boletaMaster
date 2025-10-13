@@ -21,5 +21,11 @@ public class TiqueteMultipe extends Tiquete{
 	private boolean puedeTransferirseComoPaquete() {
 		return true;
 	}
+	
+	public List<TiqueteSimple> getEntradas(){
+		return entradas;
+	}
 
 }
+
+

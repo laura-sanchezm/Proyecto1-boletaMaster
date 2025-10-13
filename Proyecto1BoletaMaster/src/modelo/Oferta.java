@@ -5,13 +5,15 @@ import java.time.LocalDate;
 public class Oferta {
 	
 	private int idOferta;
+	private int idL;
 	private double porcentajeDescuento;
 	private LocalDate fechaInicio;
 	private LocalDate fechaFin;
 	
 	
-	public Oferta(int idOferta, double porcentajeDescuento, LocalDate fechaInicio, LocalDate fechaFin) {
+	public Oferta(int idOferta, int idL ,double porcentajeDescuento, LocalDate fechaInicio, LocalDate fechaFin) {
 		this.idOferta = idOferta;
+		this.idL = idL;
 		this.porcentajeDescuento = porcentajeDescuento;
 		this.fechaInicio = fechaInicio;
 		this.fechaFin = fechaFin;
@@ -43,6 +45,14 @@ public class Oferta {
 
 	public void setIdOferta(int idOferta) {
 		this.idOferta = idOferta;
+	}
+	
+	public int getIdL() {
+		return idL;
+	}
+	
+	public void setIdL(int IdL) {
+		this.idL = IdL;
 	}
 
 
