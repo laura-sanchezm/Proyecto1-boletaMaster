@@ -28,7 +28,7 @@ public class Pago {
 
 		this.idPago = idPago;
 		this.fecha = LocalDate.now();
-		this.monto = monto;
+		this.monto = calcularMonto();
 		this.estado = estadoPago.PENDIENTE;
 		this.metodo = metodo;
 		this.cargoServicio = cargoServicio;

@@ -14,7 +14,7 @@ public class Venue {
 	private HashSet<LocalDate> fechasOcupadas;
 	
 	
-	public Venue(String nombreV, int capacidad, String tipoV, String ubicacion, String restricciones, boolean aceptado) {
+	public Venue(String nombreV, int capacidad, String tipoV, String ubicacion, String restricciones) {
 		this.nombreV = nombreV;
 		this.capacidad = capacidad;
 		this.tipoV = tipoV;
@@ -77,6 +77,10 @@ public class Venue {
 
 	public boolean isAprobado() {
 		return aprobado;
+	}
+	
+	public void setAprobado(boolean aprueba) {
+		this.aprobado = aprueba;
 	}
 
 
