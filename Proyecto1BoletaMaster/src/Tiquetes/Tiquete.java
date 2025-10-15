@@ -4,9 +4,9 @@ public abstract class Tiquete {
 	
 	private int idT;
 	private boolean transferible;
-	private String propietario;
+	private String propietario; // login del dueno actual
 	private estadoTiquete status;
-	private String tipo;
+	private String tipo; // SIMPLE, MULTIPLE, DELUXE, etc.
 	
 	
 	public Tiquete(int idT, boolean transferible, String propietario, estadoTiquete status, String tipo) {
@@ -18,68 +18,26 @@ public abstract class Tiquete {
 		this.tipo = tipo;
 		
 	}
-	
-	
-	public boolean esDisponible() {
-		return this.status.equals(estadoTiquete.DISPONIBLE);	
-	}
-	
 
-	public abstract boolean esTransferible();
-		
-	
-	public abstract void transferir(String loginARecivir, String passwordDuenio);
+    // Getters simples para leer o ver los valores de los atribbutos ptrotegidos o privados
+    public int getIdT() { return idT; }
+    public boolean esTransferible() { return transferible; }
+    public String getPropietario() { return propietario; }
+    public estadoTiquete getStatus() { return status; }
+    public String getTipo() { return tipo; }
 
+    // Setters simples para modificar los valores de os atrbutos si se llega a necesitar
+    public void setTransferible(boolean t) { this.transferible = t; }
+    public void setPropietario(String login) { this.propietario = login; }
+    public void setStatus(estadoTiquete s) { this.status = s; }
+    public void setTipo(String t) { this.tipo = t; }
 
-	public int getIdT() {
-		return idT;
-	}
+    // Cada subclase define cómo calcula el  precio y cómo se transfiere
+    public abstract double precioTotal(double cargoServicioPct, double cargoImpresionFijo);
+    public abstract void transferir(String loginComprador);
 
-
-	public void setIdT(int idT) {
-		this.idT = idT;
-	}
-
-
-	public boolean isTransferible() {
-		return transferible;
-	}
-
-
-	public void setTransferible(boolean transferible) {
-		this.transferible = transferible;
-	}
-
-
-	public String getPropietario() {
-		return propietario;
-	}
-
-
-	public void setPropietario(String propietario) {
-		this.propietario = propietario;
-	}
-
-
-	public estadoTiquete getStatus() {
-		return status;
-	}
-
-
-	public void setStatus(estadoTiquete status) {
-		this.status = status;
-	}
-
-
-	public String getTipo() {
-		return tipo;
-	}
-
-
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
-	}
-	
-	
-
+    // Cambia el estado del tiquete a COMPRADO cuando se realiza el pago.
+    public void marcarComprado() {
+        this.status = estadoTiquete.COMPRADO;
+    }
 }

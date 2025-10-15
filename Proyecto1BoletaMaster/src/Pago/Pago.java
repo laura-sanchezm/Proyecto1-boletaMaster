@@ -5,7 +5,7 @@ import Tiquetes.Tiquete;
 import java.util.ArrayList; 	
 import Tiquetes.TiqueteSimple;
 import Tiquetes.estadoTiquete;
-import Tiquetes.TiqueteMultipe;
+import Tiquetes.TiqueteMultiple;
 import modelo.Oferta;
 import modelo.Localidad;
 
@@ -48,8 +48,8 @@ public class Pago {
 				subtotal += calcularPrecioOferta(simple.getLocalidad());
 			}
 			
-			else if(t instanceof TiqueteMultipe) {
-				TiqueteMultipe multiple = (TiqueteMultipe) t;
+			else if(t instanceof TiqueteMultiple) {
+				TiqueteMultiple multiple = (TiqueteMultiple) t;
 				for(TiqueteSimple simple : multiple.getEntradas()) {
 					subtotal += calcularPrecioOferta(simple.getLocalidad());
 				}
@@ -100,8 +100,8 @@ public class Pago {
 					}
 					simple.setStatus(estadoTiquete.COMPRADO);
 				}
-				else if(t instanceof TiqueteMultipe) {
-					TiqueteMultipe multiple = (TiqueteMultipe) t;
+				else if(t instanceof TiqueteMultiple) {
+					TiqueteMultiple multiple = (TiqueteMultiple) t;
 					for(TiqueteSimple s : multiple.getEntradas()) {
 						if(s.getLocalidad().isNumerada()) {
 							s.asignarAsiento();
@@ -130,8 +130,8 @@ public class Pago {
 					loc.reponerDevolucion(simple);
 					simple.setStatus(estadoTiquete.DISPONIBLE);
 				}
-				else if(t instanceof TiqueteMultipe) {
-					TiqueteMultipe multiple = (TiqueteMultipe) t;
+				else if(t instanceof TiqueteMultiple) {
+					TiqueteMultiple multiple = (TiqueteMultiple) t;
 					for(TiqueteSimple s : multiple.getEntradas()) {
 						Localidad loc = s.getLocalidad();
 						loc.reponerDevolucion(s);
