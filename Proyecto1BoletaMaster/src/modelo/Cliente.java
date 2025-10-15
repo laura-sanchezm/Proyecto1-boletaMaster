@@ -35,5 +35,14 @@ public class Cliente extends Usuario {
 		tiquetes.add(tiquete);
 	}
 	
+	public void solicitarReembolso(int idT, int id, String motivo) {
+		//TO DO
+	}
+	
+	public void transferirTiquete(int idT, String loginComprador, String passwordVendedor) {
+		//TO DO
+	}
+	
+	
 	
 }

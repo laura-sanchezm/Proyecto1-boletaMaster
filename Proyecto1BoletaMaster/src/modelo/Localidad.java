@@ -2,6 +2,8 @@ package modelo;
 
 import java.util.HashSet;
 import Tiquetes.Tiquete;
+import Tiquetes.TiqueteSimple;
+
 
 public class Localidad {
 	
@@ -89,6 +91,19 @@ public class Localidad {
 	
 	public void addTiquete(Tiquete tiquete) {
 		tiquetes.add(tiquete);
+	}
+	
+	public void reponerDevolucion(Tiquete tiquete) {
+		if(tiquetes.contains(tiquete)) {
+			if(numerada && tiquete instanceof TiqueteSimple) {
+				TiqueteSimple simple = (TiqueteSimple) tiquete;
+				if(simple.getNumAsiento() > 0) {
+					liberarAsiento(simple.getNumAsiento());
+				}
+				
+			}
+			tiquetes.remove(tiquete);
+		}
 	}
 	
 	public int asignarAsientoDisponible() {
