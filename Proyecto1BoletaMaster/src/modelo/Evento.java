@@ -2,6 +2,8 @@ package modelo;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Evento {
 
@@ -12,6 +14,7 @@ public class Evento {
 	private String tipoE;
 	private estadoEvento estado;
 	private Venue venue;
+	private List<Localidad> localidades;
 
 	
 	
@@ -23,6 +26,7 @@ public class Evento {
 		this.tipoE = tipoE;
 		this.estado = estado;
 		this.venue = Venue;
+		this.localidades = new ArrayList<Localidad>();
 	}
 
 
@@ -107,6 +111,14 @@ public class Evento {
 
 	public void setVenue(Venue venue) {
 		this.venue = venue;
+	}
+	
+	public List<Localidad> getLocalidades(){
+		return localidades;
+	}
+	
+	public void addLocalidad(Localidad localidad) {
+		localidades.add(localidad);
 	}
 	
 	

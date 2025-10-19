@@ -14,7 +14,7 @@ public class TiqueteSimple extends Tiquete {
 
 
  public TiqueteSimple(int idT, boolean transferible, String propietario, estadoTiquete status,
-                      String tipo, Evento evento, Localidad localidad, boolean enumeradoInicial) {
+                      String tipo, Evento evento, Localidad localidad) {
 
      // llama al constructor detiquete
      super(idT, transferible, propietario, status, tipo);
@@ -22,7 +22,7 @@ public class TiqueteSimple extends Tiquete {
     
      this.evento = evento;
      this.localidad = localidad;
-     this.enumerado = enumeradoInicial;
+     this.enumerado = localidad.isNumerada();
      this.numAsiento = -1; // por defult no tiene asiento asignado
  }
 

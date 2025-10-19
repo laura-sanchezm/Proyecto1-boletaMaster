@@ -80,9 +80,15 @@ public class Venue {
 		return aprobado;
 	}
 	
+<<<<<<< HEAD
 	public void setAprobado(boolean aprobado) {   // setter simple
         this.aprobado = aprobado;
     }
+=======
+	public void setAprobado(boolean aprueba) {
+		this.aprobado = aprueba;
+	}
+>>>>>>> refs/heads/Santiago
 
 
 	public HashSet<LocalDate> getFechasOcupadas() {
