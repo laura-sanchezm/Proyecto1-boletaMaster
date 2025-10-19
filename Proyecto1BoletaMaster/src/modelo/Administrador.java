@@ -41,4 +41,30 @@ public class Administrador extends Usuario{
 		
 	}
 
+	public int getCargoServicio() {
+		return cargoServicio;
+	}
+
+	public void setCargoServicio(int cargoServicio) {
+		this.cargoServicio = cargoServicio;
+	}
+
+	public int getCargoImpresion() {
+		return cargoImpresion;
+	}
+
+	public void setCargoImpresion(int cargoImpresion) {
+		this.cargoImpresion = cargoImpresion;
+	}
+
+	public List<Evento> getEventos() {
+		return eventos;
+	}
+
+	public void setEventos(List<Evento> eventos) {
+		this.eventos = eventos;
+	}
+	
+	
+
 }

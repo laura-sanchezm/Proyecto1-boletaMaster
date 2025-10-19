@@ -42,6 +42,28 @@ public class Organizador extends Usuario{
 	public int verPorcentajeVenta(int idE, int idL) {
 		return 0;
 	}
+
+
+	public int getIdO() {
+		return idO;
+	}
+
+
+	public void setIdO(int idO) {
+		this.idO = idO;
+	}
+
+
+	public List<Evento> getEventos() {
+		return eventos;
+	}
+
+
+	public void setEventos(List<Evento> eventos) {
+		this.eventos = eventos;
+	}
+	
+	
 	
 
 }

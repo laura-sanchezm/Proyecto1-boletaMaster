@@ -2,11 +2,11 @@ package Tiquetes;
 
 public abstract class Tiquete {
 	
-	private int idT;
-	private boolean transferible;
-	private String propietario; // login del dueno actual
-	private estadoTiquete status;
-	private String tipo; // SIMPLE, MULTIPLE, DELUXE, etc.
+	protected int idT;
+	protected boolean transferible;
+	protected String propietario; // login del dueno actual
+	protected estadoTiquete status;
+	protected String tipo; // SIMPLE, MULTIPLE, DELUXE, etc.
 	
 	
 	public Tiquete(int idT, boolean transferible, String propietario, estadoTiquete status, String tipo) {

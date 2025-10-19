@@ -6,7 +6,7 @@ import Pago.metodoPago;
 import Tiquetes.Tiquete;
 import Tiquetes.TiqueteSimple;
 import Tiquetes.estadoTiquete;
-import Tiquetes.TiqueteMultipe;
+import Tiquetes.TiqueteMultiple;
 import modelo.Oferta;
 import modelo.estadoEvento;
 import modelo.Venue;
@@ -44,6 +44,7 @@ public class PerPago {
 				tObj.put("idTiquete", t.getIdT());
 				tObj.put("propietario", t.getPropietario());
 				tObj.put("estado", t.getStatus().name());
+				tObj.put("transferibilidad", t.esTransferible());
 				if(t instanceof TiqueteSimple) {
 					TiqueteSimple simple = (TiqueteSimple) t;
 					
@@ -79,8 +80,8 @@ public class PerPago {
 						tObj.put("numAsiento", simple.getNumAsiento());
 					}
 				}
-				else if(t instanceof TiqueteMultipe) {
-					TiqueteMultipe multiple = (TiqueteMultipe) t;
+				else if(t instanceof TiqueteMultiple) {
+					TiqueteMultiple multiple = (TiqueteMultiple) t;
 					tObj.put("tipo", "multiple");
 					JSONArray entradas = new JSONArray();
 					for(TiqueteSimple s : multiple.getEntradas()) {
@@ -88,6 +89,7 @@ public class PerPago {
 						sObj.put("idTiquete", s.getIdT());
 						sObj.put("propietario", s.getPropietario());
 						sObj.put("estado", s.getStatus().name());
+						sObj.put("transferibilidad", t.esTransferible());
 						
 						JSONObject esObj = new JSONObject();
 						esObj.put("idE", s.getEvento().getIdE());
@@ -96,7 +98,15 @@ public class PerPago {
 						esObj.put("hora", s.getEvento().getHora().toString());
 						esObj.put("tipoE", s.getEvento().getTipoE());
 						esObj.put("estado", s.getEvento().getEstado().name());
-						esObj.put("venue", s.getEvento().getVenue().getNombreV());
+						
+						
+						JSONObject vsObj = new JSONObject();
+						vsObj.put("nombreV", s.getEvento().getVenue().getNombreV());
+						vsObj.put("capacidad", s.getEvento().getVenue().getCapacidad());
+						vsObj.put("tipoV", s.getEvento().getVenue().getTipoV());
+						vsObj.put("ubicacion", s.getEvento().getVenue().getUbicacion());
+						vsObj.put("restricciones", s.getEvento().getVenue().getRestricciones());
+						esObj.put("venue", vsObj);
 						
 						sObj.put("evento", esObj);
 						
@@ -161,7 +171,7 @@ public class PerPago {
 			
 			ArrayList<Tiquete> tiquetes = new ArrayList<Tiquete>();
 			JSONArray tiquetesArray = obj.getJSONArray("tiquetes");
-			for(int j = 0; j > tiquetesArray.length();i++) {
+			for(int j = 0; j < tiquetesArray.length();j++) {
 				JSONObject tObj = tiquetesArray.getJSONObject(j);
 				String tipo = tObj.getString("tipo");
 				
@@ -198,8 +208,9 @@ public class PerPago {
 					int idTiquete = tObj.getInt("idTiquete");
 					String propietario = tObj.getString("propietario");
 					estadoTiquete tEstado = estadoTiquete.valueOf(tObj.getString("estado"));
+					boolean transferibilidad = tObj.getBoolean("transferibilidad");
 					
-					TiqueteSimple simple = new TiqueteSimple(idTiquete, false, propietario, tEstado, "simple", evento, localidad);
+					TiqueteSimple simple = new TiqueteSimple(idTiquete, transferibilidad, propietario, tEstado, "simple", evento, localidad);
 					
 					if(tObj.has("numAsiento")) {
 						simple.setNumAsiento(tObj.getInt("numAsiento"));
@@ -209,9 +220,85 @@ public class PerPago {
 					
 				}
 				
-				else if(tipo.equals("multiple")); //Falta completar implementacion de TiqueteMultiple
+				else if(tipo.equals("multiple")) {
+					int idTM = tObj.getInt("idTiquete");
+					String propietarioM = tObj.getString("propietario");
+					estadoTiquete tEstadoM = estadoTiquete.valueOf(tObj.getString("estado"));
+					boolean transferibilidadM = tObj.getBoolean("transferibilidad");
+					
+					TiqueteMultiple multiple = new TiqueteMultiple(idTM, transferibilidadM, propietarioM, tEstadoM, "mupltiple");
+					
+					JSONArray entradas = tObj.getJSONArray("entradas");
+					
+					for(int k = 0; k < entradas.length(); k++) {
+						
+						JSONObject sObj = entradas.getJSONObject(k);
+						
+						JSONObject eSObj = sObj.getJSONObject("evento");
+						Evento eventoE = new Evento(
+								eSObj.getInt("idE"),
+								eSObj.getString("nombreE"),
+								LocalDate.parse(eSObj.getString("fecha")),
+								LocalTime.parse(eSObj.getString("hora")),
+								eSObj.getString("tipoE"),
+								estadoEvento.valueOf(eSObj.getString("estado")),
+								new Venue(
+										eSObj.getJSONObject("venue").getString("nombreV"),
+										eSObj.getJSONObject("venue").getInt("capacidad"),
+										eSObj.getJSONObject("venue").getString("tipoV"),
+										eSObj.getJSONObject("venue").getString("ubicacion"),
+										eSObj.getJSONObject("venue").getString("restricciones")
+										));
+						
+						
+						JSONObject lSObj = sObj.getJSONObject("localidad");
+						Localidad locE = new Localidad(
+								lSObj.getInt("idL"),
+								lSObj.getString("nombreL"),
+								lSObj.getDouble("precioBase"),
+								lSObj.getInt("capacidadL"));
+						
+						
+						int idEntrada = sObj.getInt("idTiquete");
+						String propietarioEntrada = sObj.getString("propietario");
+						estadoTiquete estadoEntrada = estadoTiquete.valueOf(sObj.getString("estado"));
+						boolean transferibilidadE = sObj.getBoolean("transferibilidad");
+						
+						TiqueteSimple simpleE = new TiqueteSimple(idEntrada, transferibilidadE, propietarioEntrada, estadoEntrada, "simple", eventoE, locE);
+						
+						if(sObj.has("numAsineto")) {
+							simpleE.setNumAsiento(sObj.getInt("numAsiento"));
+						}
+						
+						multiple.getEntradas().add(simpleE);
+						
+								
+								
+					}
+					tiquetes.add(multiple);
+				}
+				
 			}
 			
+			ArrayList<Oferta> ofertas = new ArrayList<Oferta>();
+			if(obj.has("oferta")) {
+				JSONArray ofertasArray = obj.getJSONArray("ofertas");
+				for(int b = 0; b < ofertasArray.length(); b++) {
+					JSONObject oObj = ofertasArray.getJSONObject(b);
+					Oferta oferta = new Oferta(
+							oObj.getInt("idOferta"),
+							oObj.getInt("idL"),
+							oObj.getDouble("porcentajeDescuento"),
+							LocalDate.parse(oObj.getString("fechaInicio")),
+							LocalDate.parse(oObj.getString("fechaFin")));
+					ofertas.add(oferta);
+				}
+			}
+			
+			Pago pago = new Pago(idPago, fecha, monto, estado, metodo, cargoServicio, cargoImpresion, tiquetes, ofertas );
+			lista.add(pago);
 		}
+		
+		return lista;
 	}
 }
