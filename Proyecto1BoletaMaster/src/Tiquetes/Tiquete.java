@@ -7,6 +7,8 @@ public abstract class Tiquete {
 	private String propietario;
 	private estadoTiquete status;
 	private String tipo;
+	private boolean devolucionSolicitada;
+	private String motivoDevolucion;
 	
 	
 	public Tiquete(int idT, boolean transferible, String propietario, estadoTiquete status, String tipo) {
@@ -80,6 +82,24 @@ public abstract class Tiquete {
 		this.tipo = tipo;
 	}
 	
+	
+	public void setDevolucionSolicitada(boolean devolucionSolicitada) {
+		this.devolucionSolicitada = devolucionSolicitada;
+	}
+	
+	public boolean getDevolucionSolicitada() {
+		return devolucionSolicitada;
+	}
+	
+	
+	public void setMotivoDevolucion(String motivoDevolucion) {
+		this.motivoDevolucion = motivoDevolucion;
+	}
+	
+	
+	public String getMotivoDevolucion() {
+		return motivoDevolucion;
+	}
 	
 
 }

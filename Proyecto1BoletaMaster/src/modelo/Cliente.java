@@ -35,8 +35,13 @@ public class Cliente extends Usuario {
 		tiquetes.add(tiquete);
 	}
 	
-	public void solicitarReembolso(int idT, int id, String motivo) {
-		//TO DO
+	public void solicitarDevolucion(int idT, int id, String motivo) {
+		for (Tiquete t : tiquetes) {
+			if (t.getIdT() == idT) {
+				
+			}
+		}
+		
 	}
 	
 	public void transferirTiquete(int idT, String loginComprador, String passwordVendedor) {
