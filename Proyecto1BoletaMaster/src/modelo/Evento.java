@@ -10,12 +10,12 @@ public class Evento {
 	private LocalDate fecha;
 	private LocalTime hora; 
 	private String tipoE;
-	private Enum<estadoEvento> estado;
+	private estadoEvento estado;
 	private Venue venue;
 
 	
 	
-	public Evento(int idE, String nombreE, LocalDate fecha, LocalTime hora, String tipoE, Enum<estadoEvento> estado, Venue Venue) {
+	public Evento(int idE, String nombreE, LocalDate fecha, LocalTime hora, String tipoE, estadoEvento estado, Venue Venue) {
 		this.idE = idE;
 		this.nombreE = nombreE;
 		this.fecha = fecha;
@@ -93,7 +93,7 @@ public class Evento {
 
 
 
-	public void setEstado(Enum<estadoEvento> status) {
+	public void setEstado(estadoEvento status) {
 		this.estado = status;
 	}
 

@@ -7,6 +7,8 @@ public abstract class Tiquete {
 	private String propietario; // login del dueno actual
 	private estadoTiquete status;
 	private String tipo; // SIMPLE, MULTIPLE, DELUXE, etc.
+	private boolean devolucionSolicitada;
+	private String motivoDevolucion;
 	
 	
 	public Tiquete(int idT, boolean transferible, String propietario, estadoTiquete status, String tipo) {
@@ -40,4 +42,29 @@ public abstract class Tiquete {
     public void marcarComprado() {
         this.status = estadoTiquete.COMPRADO;
     }
+
+	public void setIdT(int idT) {
+		this.idT = idT;
+	}
+	
+	
+	public void setDevolucionSolicitada(boolean devolucionSolicitada) {
+		this.devolucionSolicitada = devolucionSolicitada;
+	}
+	
+	public boolean getDevolucionSolicitada() {
+		return devolucionSolicitada;
+	}
+	
+	
+	public void setMotivoDevolucion(String motivoDevolucion) {
+		this.motivoDevolucion = motivoDevolucion;
+	}
+	
+	
+	public String getMotivoDevolucion() {
+		return motivoDevolucion;
+	}
+	
+
 }
