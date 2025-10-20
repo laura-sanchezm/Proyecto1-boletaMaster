@@ -1,59 +1,47 @@
 package Tiquetes;
 
-public abstract class Tiquete {
-	
-<<<<<<< HEAD
-	private int idT;
-	private boolean transferible;
-	private String propietario; // login del dueno actual
-	private estadoTiquete status;
-	private String tipo; // SIMPLE, MULTIPLE, DELUXE, etc.
-	private boolean devolucionSolicitada;
-	private String motivoDevolucion;
-=======
-	protected int idT;
-	protected boolean transferible;
-	protected String propietario; // login del dueno actual
-	protected estadoTiquete status;
-	protected String tipo; // SIMPLE, MULTIPLE, DELUXE, etc.
->>>>>>> refs/heads/Santiago
-	
-	
-	public Tiquete(int idT, boolean transferible, String propietario, estadoTiquete status, String tipo) {
-		
-		this.idT = idT;
-		this.transferible = transferible;
-		this.propietario = propietario;
-		this.status = status;
-		this.tipo = tipo;
-		
-	}
 
-    // Getters simples para leer o ver los valores de los atribbutos ptrotegidos o privados
+public abstract class Tiquete {
+
+   
+    protected int idT;              // identificador del tiquete
+    protected boolean transferible; 
+    protected String propietario;   // login o nombre del dueño actual
+    protected estadoTiquete status; 
+    protected String tipo;          
+
+    
+    public Tiquete(int idT, boolean transferible, String propietario, estadoTiquete status, String tipo) {
+        this.idT = idT;
+        this.transferible = transferible;
+        this.propietario = propietario;
+        this.status = status;
+        this.tipo = tipo;
+    }
+
+    // Getters
     public int getIdT() { return idT; }
     public boolean esTransferible() { return transferible; }
     public String getPropietario() { return propietario; }
     public estadoTiquete getStatus() { return status; }
     public String getTipo() { return tipo; }
 
-    // Setters simples para modificar los valores de os atrbutos si se llega a necesitar
-    public void setTransferible(boolean t) { this.transferible = t; }
-    public void setPropietario(String login) { this.propietario = login; }
-    public void setStatus(estadoTiquete s) { this.status = s; }
-    public void setTipo(String t) { this.tipo = t; }
+    // Setters
+    public void setTransferible(boolean transferible) { this.transferible = transferible; }
+    public void setPropietario(String propietario) { this.propietario = propietario; }
+    public void setStatus(estadoTiquete status) { this.status = status; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
+    public void setIdT(int idT) { this.idT = idT; }
 
-    // Cada subclase define cómo calcula el  precio y cómo se transfiere
+    // las hijas lo hacen y aca se traen
     public abstract double precioTotal(double cargoServicioPct, double cargoImpresionFijo);
     public abstract void transferir(String loginComprador);
 
-    // Cambia el estado del tiquete a COMPRADO cuando se realiza el pago.
+    // estado del tiquete a COMPRADO cuando se hace el pago
     public void marcarComprado() {
         this.status = estadoTiquete.COMPRADO;
     }
 
-	public void setIdT(int idT) {
-		this.idT = idT;
-	}
 	
 	
 	public void setDevolucionSolicitada(boolean devolucionSolicitada) {
