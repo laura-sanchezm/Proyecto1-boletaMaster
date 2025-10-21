@@ -134,5 +134,15 @@ public class Localidad {
 		return oferta;
 	}
 	
-
+	//funcion auxiliar
+		public Tiquete buscarTiquete(int idT) {
+			for (Tiquete t: tiquetes) {
+				if (t.getIdT() == idT) {
+					return t;
+				}
+			}
+				return null;
+		}
+	
+			
 }

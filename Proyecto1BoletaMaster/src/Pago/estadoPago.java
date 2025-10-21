@@ -5,6 +5,7 @@ public enum estadoPago {
 	PENDIENTE,
 	APROBADO,
 	RECHAZADO,
-	ANULADO
+	ANULADO,
+	DEVOLUCION
 
 }

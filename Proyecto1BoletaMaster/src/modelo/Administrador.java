@@ -2,6 +2,9 @@ package modelo;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
+import Tiquetes.Tiquete;
+import Tiquetes.estadoTiquete;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Administrador extends Usuario{
 	
@@ -24,6 +27,8 @@ public class Administrador extends Usuario{
 		}
 	}
 	
+	
+	
 	public void cancelarEvento(int idE) {
 		for (Evento e : eventos) {
 			if (e.getIdE() == idE) {
@@ -42,6 +47,15 @@ public class Administrador extends Usuario{
 		
 	}
 	
+	// generador de id para pago
+    private final AtomicInteger seqPago = new AtomicInteger(1);
+
+    public int generarIdPago() {
+        return seqPago.getAndIncrement();
+    }
+	
+    
+    
 	public void fijarCargoServicio(int s) {
 		this.cargoServicio = s;
 	}
@@ -51,11 +65,25 @@ public class Administrador extends Usuario{
 	}
 	
 	public boolean aprobarDevolucion(int idT) {
-		
+		for (Evento e : eventos) {
+			Tiquete t = e.buscarTiquete(idT);
+			if (t.getDevolucionSolicitada() == true) {
+				String motivo = t.getMotivoDevolucion();
+				// aprueba devolucion si el motivo contiene la palabra hospital o viaje
+				if (motivo.contains("hospital") || motivo.contains("viaje")) {
+					t.setStatus(estadoTiquete.DISPONIBLE);
+					t.setDevolucionSolicitada(false);
+					t.setMotivoDevolucion(null);
+					t.setPropietario(null);
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	public void verGanancias(LocalDate fechaMin, LocalDate fechaMax, int idE) {
-		
+		// TO DO 
 	}
 
 	public int getCargoServicio() {

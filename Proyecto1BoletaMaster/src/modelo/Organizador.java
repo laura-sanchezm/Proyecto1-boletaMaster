@@ -17,29 +17,46 @@ public class Organizador extends Usuario{
 		
 	}
 	
+	// funcion auxiliar
+	private Evento buscarEventoPorId(int idE) {
+		for(Evento e : eventos) {
+			if(e.getIdE() == idE) {
+				return e;
+			}
+		}
+		return null;
+	}
+	
 	
 	public Evento crearEvento(int idE, String nombre, LocalDate fecha, LocalTime hora, String tipo,  Enum<estadoEvento> estado, Venue venue) {
 		Evento evento = new Evento(idE, nombre, fecha, hora, tipo, estadoEvento.PROGRAMADO, venue);
 		return evento;
 	}
 	
+	
 	public void asignarLocalidad(int idE, List<Localidad> localidades) {
-		// TO DO
+		Evento e = buscarEventoPorId(idE);
+		for (Localidad l: localidades) {
+			e.addLocalidad(l);
+		}
 	}
+	
 	
 	public void aplicarOferta(int idL, int porcentaje, LocalTime horaInicio, LocalTime horaFinal) {
 		// TO DO
 	}
 	
-	public void solicitarCancelacion(int idE, String motivo) {
-		// TO DO
+	public void solicitarCancelacion(int idE) {
+		// TO DO - Necesitas funciones no implementadas de tiquete (es diposnible)
 	}
 	
 	public int verIngresos(int idO, LocalDate fechaMin, LocalDate fechaMax, int idE, int idL) {
+		//TO DO
 		return 0;
 	}
 	
 	public int verPorcentajeVenta(int idE, int idL) {
+		// TO DO 
 		return 0;
 	}
 

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.ArrayList;
+import Tiquetes.Tiquete;
 
 public class Evento {
 
@@ -91,7 +92,7 @@ public class Evento {
 
 
 
-	public Enum<estadoEvento> getEstado() {
+	public estadoEvento getEstado() {
 		return estado;
 	}
 
@@ -124,6 +125,15 @@ public class Evento {
 	
 	public int aforoDisponible() {
 		return venue.getCapacidad();
+	}
+	
+	//funcion auxiliar
+	public Tiquete buscarTiquete(int idT) {
+		for (Localidad l: localidades) {
+			Tiquete t = l.buscarTiquete(idT);
+			return t;
+		}
+		return null;
 	}
 	
 	
