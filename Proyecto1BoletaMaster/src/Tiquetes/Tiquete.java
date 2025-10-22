@@ -38,6 +38,14 @@ public abstract class Tiquete {
     public abstract double precioTotal(double cargoServicioPct, double cargoImpresionFijo);
     public abstract void transferir(String loginComprador);
 
+    public boolean esDisponible() {
+        if (status == estadoTiquete.DISPONIBLE) {
+            return true;
+        } else {
+            System.out.println("El tiquete no está disponible.");
+            return false;
+        }
+    }
     // Cambia el estado del tiquete a COMPRADO cuando se realiza el pago.
     public void marcarComprado() {
         this.status = estadoTiquete.COMPRADO;
