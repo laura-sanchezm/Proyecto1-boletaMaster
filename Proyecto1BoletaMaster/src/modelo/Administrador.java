@@ -52,7 +52,7 @@ public class Administrador extends Usuario{
 			if(e.getDevolucionSolicitada()== true) {
 				cancelarEvento(idE);
 			}
-		}
+		}S
 	}
 	
 	// generador de id para pago

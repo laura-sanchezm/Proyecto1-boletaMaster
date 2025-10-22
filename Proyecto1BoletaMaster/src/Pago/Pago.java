@@ -100,8 +100,7 @@ public class Pago {
 					}
 					simple.setStatus(estadoTiquete.COMPRADO);
 				}
-				else if(t instanceof TiqueteMultiple) {
-					TiqueteMultiple multiple = (TiqueteMultiple) t;
+				else if(t instanceof TiqueteMultiple multiple) {
 					for(TiqueteSimple s : multiple.getEntradas()) {
 						if(s.getLocalidad().isNumerada()) {
 							s.asignarAsiento();

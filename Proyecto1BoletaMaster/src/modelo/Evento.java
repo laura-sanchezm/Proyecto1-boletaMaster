@@ -17,10 +17,11 @@ public class Evento {
 	private Venue venue;
 	private List<Localidad> localidades;
 	private boolean cancelacionSolicitada;
+	private Organizador organizador; 
 
 	
 	
-	public Evento(int idE, String nombreE, LocalDate fecha, LocalTime hora, String tipoE, estadoEvento estado, Venue Venue) {
+	public Evento(int idE, String nombreE, LocalDate fecha, LocalTime hora, String tipoE, estadoEvento estado, Venue Venue, Organizador organizador) {
 		this.idE = idE;
 		this.nombreE = nombreE;
 		this.fecha = fecha;
@@ -29,6 +30,7 @@ public class Evento {
 		this.estado = estado;
 		this.venue = Venue;
 		this.localidades = new ArrayList<Localidad>();
+		this.organizador = organizador;
 	}
 
 
@@ -143,6 +145,14 @@ public class Evento {
 	
 	public boolean getDevolucionSolicitada() {
 		return cancelacionSolicitada;
+	}
+	
+	public void setOrganizador(Organizador organizador) {
+		this.organizador = organizador;
+	}
+	
+	public Organizador getOrganizador() {
+		return organizador;
 	}
 	
 	
