@@ -43,20 +43,35 @@ public class Organizador extends Usuario{
 	
 	
 	public void aplicarOferta(int idL, int porcentaje, LocalTime horaInicio, LocalTime horaFinal) {
-		// TO DO
+		Localidad target = null;
+	    for (Evento e : eventos) {
+	        if (e == null || e.getLocalidades() == null) continue;
+	        for (Localidad l : e.getLocalidades()) {
+	            if (l != null && l.getIdL() == idL) {
+	                target = l;                 
+	            }
+	        }
+	    }
+	    
+	    Oferta o = new Oferta(idL, porcentaje, horaInicio, horaFinal);
 	}
 	
 	public void solicitarCancelacion(int idE) {
-		// TO DO - Necesitas funciones no implementadas de tiquete (es diposnible)
+		// TO DO - PUEDE SOLICITAR POR INSOLVENCIA
+		for (Evento e: eventos) {
+			if(e.getIdE() == idE) {
+				e.setCancelacionSolicitada(true);
+			}
+		}
 	}
 	
-	public int verIngresos(int idO, LocalDate fechaMin, LocalDate fechaMax, int idE, int idL) {
-		//TO DO
+	public int verIngresos(int idO) {
+		//TO DO - los ingresos del organizador son los tiquetes isn acrgos adiconales
 		return 0;
 	}
 	
 	public int verPorcentajeVenta(int idE, int idL) {
-		// TO DO 
+		// TO DO, (ventas/disponibles) se puede ver total, o filtrar por evento o localidad.
 		return 0;
 	}
 

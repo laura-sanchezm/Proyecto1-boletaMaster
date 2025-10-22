@@ -47,6 +47,14 @@ public class Administrador extends Usuario{
 		
 	}
 	
+	public void aprobarCancelacion(int idE) {
+		for (Evento e : eventos) {
+			if(e.getDevolucionSolicitada()== true) {
+				cancelarEvento(idE);
+			}
+		}
+	}
+	
 	// generador de id para pago
     private final AtomicInteger seqPago = new AtomicInteger(1);
 

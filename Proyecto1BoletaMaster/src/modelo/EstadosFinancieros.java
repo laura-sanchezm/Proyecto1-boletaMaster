@@ -10,21 +10,25 @@ public class EstadosFinancieros {
 	
 	private List<Pago> transacciones;
 	
-	public void registrarTransaccion() {
-	// TO DO	
+	public void registrarTransaccion(Pago p) {
+		transacciones.add(p);
 	}
 	
-	public void anularTransaccion() {
-		// TO DO	
+	public void anularTransaccion(int idPago) {
+		for (Pago p : transacciones) {
+            if (p.getIdPago() == idPago) {
+                p.anular();
+            }
+		}
 	}
 	
 	public int totalGanancias(LocalDate fechaMin, LocalDate fechaMax, int idE, int idO) {
-		// TO DO	
+		// TO DO
 		return 0;
 	}
 	
-	public int ingresoBaseOrganizador(int idO, LocalDate fechaMin, LocalDate fechaMax, int idE, int idL) {
-		// TO DO
+	public int verIngresos(int idO, LocalDate fechaMin, LocalDate fechaMax, int idE, int idL) {
+		// PODRA ver sus ingresos - el tiquete sin rercargos
 		return 0;
 	}
 	

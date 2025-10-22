@@ -16,6 +16,7 @@ public class Evento {
 	private estadoEvento estado;
 	private Venue venue;
 	private List<Localidad> localidades;
+	private boolean cancelacionSolicitada;
 
 	
 	
@@ -134,6 +135,14 @@ public class Evento {
 			return t;
 		}
 		return null;
+	}
+	
+	public void setCancelacionSolicitada(boolean cancelacionSolicitada) {
+		this.cancelacionSolicitada = cancelacionSolicitada;
+	}
+	
+	public boolean getDevolucionSolicitada() {
+		return cancelacionSolicitada;
 	}
 	
 	

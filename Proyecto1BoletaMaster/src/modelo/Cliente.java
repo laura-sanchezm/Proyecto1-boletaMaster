@@ -64,8 +64,7 @@ public class Cliente extends Usuario {
 	}
 	
 	public void comprarTiquetes(Evento e, int idL, int cantidad, metodoPago metodo, Administrador admin) {
-		//TO DO 
-		
+
 		//econtrar localidad en evento
 		Localidad loc = null;
 		for (Localidad l : e.getLocalidades()) {
