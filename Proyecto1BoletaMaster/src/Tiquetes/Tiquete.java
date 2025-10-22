@@ -2,23 +2,15 @@ package Tiquetes;
 
 public abstract class Tiquete {
 	
-<<<<<<< HEAD
-	private int idT;
-	private boolean transferible;
-	private String propietario; // login del dueno actual
-	private estadoTiquete status;
-	private String tipo; // SIMPLE, MULTIPLE, DELUXE, etc.
-	private boolean devolucionSolicitada;
-	private String motivoDevolucion;
-=======
+
 	protected int idT;
 	protected boolean transferible;
 	protected String propietario; // login del dueno actual
 	protected estadoTiquete status;
 	protected String tipo; // SIMPLE, MULTIPLE, DELUXE, etc.
->>>>>>> refs/heads/Santiago
-	
-	
+	protected boolean devolucionSolicitada;
+	protected String motivoDevolucion;
+		
 	public Tiquete(int idT, boolean transferible, String propietario, estadoTiquete status, String tipo) {
 		
 		this.idT = idT;
