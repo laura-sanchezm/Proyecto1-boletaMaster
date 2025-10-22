@@ -68,15 +68,38 @@ public class EstadosFinancieros {
 	    return ganancias;
 	}
 	
+	
 	public double totalGananciasPorOrganizador(int idO) {
-		// TO DO
+		double ganancias = 0.0;
+		
 		for(Pago p: transacciones) {
 			ArrayList<Tiquete> tiquetes = p.getTiquetesComprados();
 			boolean pertenece = false;
-			
+			for(Tiquete t: tiquetes) {
+				if (t instanceof TiqueteSimple) {
+					TiqueteSimple ts = (TiqueteSimple) t;
+					Evento e = ts.getEvento();
+					Organizador o = e.getOrganizador();
+					if(o.getIdO() == idO) {
+						pertenece = true;
+					}
+				} else if (t instanceof TiqueteMultiple multiple) {
+					for (TiqueteSimple ts: multiple.getEntradas()) {
+						Evento e = ts.getEvento();
+						Organizador o = e.getOrganizador();
+						if(o.getIdO() == idO) {
+							pertenece = true;
+						}
+					}
+				}
+			} if(pertenece) {
+	    		ganancias += p.getMonto();
+	    	}	
 		}
-		return 0;
+		return ganancias;
 	}
+	
+	
 	
 	public int verIngresos(int idO, LocalDate fechaMin, LocalDate fechaMax, int idE, int idL) {
 		// PODRA ver sus ingresos - el tiquete sin rercargos
