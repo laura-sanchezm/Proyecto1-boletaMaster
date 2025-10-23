@@ -12,7 +12,6 @@ public class Administrador extends Usuario{
 	int cargoImpresion;
 	private List<Evento> eventos;
 	
-	//finanzas
 	
 	public Administrador(String login, String password) {
 		super(login, password);

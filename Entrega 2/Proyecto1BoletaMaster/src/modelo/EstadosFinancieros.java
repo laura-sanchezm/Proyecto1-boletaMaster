@@ -101,40 +101,6 @@ public class EstadosFinancieros {
 		}
 		return ganancias;
 	}
-
-	// funcion para organizador -  ganancias sin recargos adicionales (servicios e impresion)
-	
-	public double verIngresos(Organizador o) {
-		double ingresos = 0.0;
-		List<Evento> eventos = o.getEventos();
-		for (Evento e: eventos) {
-			List<Localidad> localidades = e.getLocalidades();
-			for (Localidad loc : localidades) {
-				HashSet<Tiquete> tiquetes = loc.getTiquetes();
-				for (Tiquete t : tiquetes) {
-					if (t instanceof TiqueteSimple) {
-						TiqueteSimple ts = (TiqueteSimple) t;
-	                    if (ts.getStatus() == estadoTiquete.COMPRADO) {
-	                        ingresos += loc.getPrecioBase(); // sin cargos ni descuentos
-	                    }
-					} else if (t instanceof TiqueteMultiple multiple) {
-						for (TiqueteSimple ts: multiple.getEntradas()) {
-							if (ts.getStatus() == estadoTiquete.COMPRADO) {
-	                            Localidad locSimple = ts.getLocalidad();
-	                            ingresos += locSimple.getPrecioBase();
-	                        }
-						}
-					}
-				}
-			}
-		}
-	 
-		return ingresos;
-	}
-	
-	public int porcentajeVenta(int idE, int idL) {
-		// TO DO
-		return 0;
-	}
+		
 
 }
