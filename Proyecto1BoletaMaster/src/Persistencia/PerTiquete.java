@@ -8,6 +8,7 @@ import modelo.Evento;
 import modelo.Localidad;
 import modelo.Venue;
 import modelo.estadoEvento;
+import modelo.Organizador;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
@@ -51,6 +52,12 @@ public class PerTiquete {
 				vObj.put("ubicacion", e.getVenue().getUbicacion());
 				vObj.put("restricciones", e.getVenue().getRestricciones());
 				eObj.put("venue", vObj);
+				
+				JSONObject orObj = new JSONObject();
+				orObj.put("login", e.getOrganizador().getLogin());
+				orObj.put("password", e.getOrganizador().getPassword());
+				orObj.put("idO", e.getOrganizador().getPassword());
+				eObj.put("organizador", orObj);
 				
 				tObj.put("evento", eObj);
 				
@@ -96,6 +103,12 @@ public class PerTiquete {
 					vsObj.put("restricciones", s.getEvento().getVenue().getRestricciones());
 					esObj.put("venue", vsObj);
 					
+					JSONObject orsObj = new JSONObject();
+					orsObj.put("login", s.getEvento().getOrganizador().getLogin());
+					orsObj.put("password", s.getEvento().getOrganizador().getPassword());
+					orsObj.put("idO", s.getEvento().getOrganizador().getPassword());
+					esObj.put("organizador", orsObj);
+					
 					sObj.put("evento", esObj);
 					
 					if(s.isEnumerado()) {
@@ -129,6 +142,8 @@ public class PerTiquete {
 
                 JSONObject eObj = tObj.getJSONObject("evento");
                 JSONObject vObj = eObj.getJSONObject("venue");
+                JSONObject orObj = eObj.getJSONObject("organizador");
+                
                 Venue v = new Venue(
                         vObj.getString("nombreV"),
                         vObj.getInt("capacidad"),
@@ -136,6 +151,11 @@ public class PerTiquete {
                         vObj.getString("ubicacion"),
                         vObj.getString("restricciones")
                 );
+                
+                Organizador o = new Organizador(
+                		orObj.getString("login"),
+                		orObj.getString("password"),
+                		orObj.getInt("idO"));
 
                 Evento e = new Evento(
                         eObj.getInt("idE"),
@@ -144,7 +164,8 @@ public class PerTiquete {
                         LocalTime.parse(eObj.getString("hora")),
                         eObj.getString("tipoE"),
                         estadoEvento.valueOf(eObj.getString("estado")),
-                        v
+                        v,
+                        o
                 );
 
                 JSONObject lObj = tObj.getJSONObject("localidad");
@@ -179,24 +200,32 @@ public class PerTiquete {
                     boolean transferible = sObj.getBoolean("transferible");
                     estadoTiquete estado = estadoTiquete.valueOf(sObj.getString("estado"));
 
-                    JSONObject eObj = sObj.getJSONObject("evento");
-                    JSONObject vObj = eObj.getJSONObject("venue");
+                    JSONObject esObj = sObj.getJSONObject("evento");
+                    JSONObject vsObj = esObj.getJSONObject("venue");
+                    JSONObject orsObj = esObj.getJSONObject("organizador");
+                    
                     Venue v = new Venue(
-                            vObj.getString("nombreV"),
-                            vObj.getInt("capacidad"),
-                            vObj.getString("tipoV"),
-                            vObj.getString("ubicacion"),
-                            vObj.getString("restricciones")
+                            vsObj.getString("nombreV"),
+                            vsObj.getInt("capacidad"),
+                            vsObj.getString("tipoV"),
+                            vsObj.getString("ubicacion"),
+                            vsObj.getString("restricciones")
                     );
+                    
+                    Organizador o = new Organizador(
+                    		orsObj.getString("login"),
+                    		orsObj.getString("password"),
+                    		orsObj.getInt("idO"));
 
                     Evento e = new Evento(
-                            eObj.getInt("idE"),
-                            eObj.getString("nombreE"),
-                            LocalDate.parse(eObj.getString("fecha")),
-                            LocalTime.parse(eObj.getString("hora")),
-                            eObj.getString("tipoE"),
-                            estadoEvento.valueOf(eObj.getString("estado")),
-                            v
+                            esObj.getInt("idE"),
+                            esObj.getString("nombreE"),
+                            LocalDate.parse(esObj.getString("fecha")),
+                            LocalTime.parse(esObj.getString("hora")),
+                            esObj.getString("tipoE"),
+                            estadoEvento.valueOf(esObj.getString("estado")),
+                            v,
+                            o
                     );
 
                     JSONObject lObj = sObj.getJSONObject("localidad");

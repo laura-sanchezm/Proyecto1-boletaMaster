@@ -12,6 +12,7 @@ import modelo.estadoEvento;
 import modelo.Venue;
 import modelo.Evento;
 import modelo.Localidad;
+import modelo.Organizador;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.List;
@@ -64,6 +65,12 @@ public class PerPago {
 					vObj.put("restricciones", simple.getEvento().getVenue().getRestricciones());
 					eObj.put("venue", vObj);
 					
+					JSONObject orObj = new JSONObject();
+					orObj.put("login", simple.getEvento().getOrganizador().getLogin());
+					orObj.put("password", simple.getEvento().getOrganizador().getPassword());
+					orObj.put("idO", simple.getEvento().getOrganizador().getIdO());
+					eObj.put("organizador", orObj);
+					
 					tObj.put("evento", eObj);
 					
 					JSONObject lObj = new JSONObject();
@@ -98,6 +105,7 @@ public class PerPago {
 						esObj.put("hora", s.getEvento().getHora().toString());
 						esObj.put("tipoE", s.getEvento().getTipoE());
 						esObj.put("estado", s.getEvento().getEstado().name());
+			
 						
 						
 						JSONObject vsObj = new JSONObject();
@@ -107,6 +115,12 @@ public class PerPago {
 						vsObj.put("ubicacion", s.getEvento().getVenue().getUbicacion());
 						vsObj.put("restricciones", s.getEvento().getVenue().getRestricciones());
 						esObj.put("venue", vsObj);
+						
+						JSONObject orsObj = new JSONObject();
+						orsObj.put("login", s.getEvento().getOrganizador().getLogin());
+						orsObj.put("password", s.getEvento().getOrganizador().getPassword());
+						orsObj.put("idO", s.getEvento().getOrganizador().getIdO());
+						esObj.put("organizador", orsObj);
 						
 						sObj.put("evento", esObj);
 						
@@ -192,8 +206,15 @@ public class PerPago {
 				String restricciones = vObj.getString("restricciones");
 				
 				
+				JSONObject orObj = eObj.getJSONObject("organizador");
+				String login = orObj.getString("login");
+				String password = orObj.getString("password");
+				int idO = orObj.getInt("idO");
+				
+				
 				Venue venue = new Venue(nombreV, capacidadV, tipoV, ubicacionV, restricciones);
-				Evento evento = new Evento(idE,nombreE,fechaE,horaE,tipoE,estadoE,venue);
+				Organizador organizador = new Organizador(login,password,idO);
+				Evento evento = new Evento(idE,nombreE,fechaE,horaE,tipoE,estadoE,venue,organizador);
 				
 				 
 				JSONObject lObj = tObj.getJSONObject("localidad");
@@ -248,7 +269,11 @@ public class PerPago {
 										eSObj.getJSONObject("venue").getString("tipoV"),
 										eSObj.getJSONObject("venue").getString("ubicacion"),
 										eSObj.getJSONObject("venue").getString("restricciones")
-										));
+										),
+								new Organizador(
+										eSObj.getJSONObject("organizador").getString("login"),
+										eSObj.getJSONObject("organizador").getString("password"),
+										eSObj.getJSONObject("organizador").getInt("idO")));
 						
 						
 						JSONObject lSObj = sObj.getJSONObject("localidad");
