@@ -12,7 +12,6 @@ public class Administrador extends Usuario{
 	int cargoImpresion;
 	private List<Evento> eventos;
 	
-	//finanzas
 	
 	public Administrador(String login, String password) {
 		super(login, password);
@@ -52,7 +51,7 @@ public class Administrador extends Usuario{
 			if(e.getDevolucionSolicitada()== true) {
 				cancelarEvento(idE);
 			}
-		}S
+		}
 	}
 	
 	// generador de id para pago
@@ -90,8 +89,16 @@ public class Administrador extends Usuario{
 		return false;
 	}
 	
-	public void verGanancias(LocalDate fechaMin, LocalDate fechaMax, int idE) {
-		// TO DO 
+	public double verGananciasPorFecha(LocalDate fechaMin, LocalDate fechaMax, EstadosFinancieros ef) {
+		return ef.totalGananciasPorFecha(fechaMin, fechaMax);
+	}
+	
+	public double verGananciasPorEvento(int idE, EstadosFinancieros ef) {
+		return ef.totalGananciasPorEvento(idE);
+	}
+	
+	public double verGananciasPorOrganizador(int idO, EstadosFinancieros ef) {
+		return ef.totalGananciasPorOrganizador(idO);
 	}
 
 	public int getCargoServicio() {

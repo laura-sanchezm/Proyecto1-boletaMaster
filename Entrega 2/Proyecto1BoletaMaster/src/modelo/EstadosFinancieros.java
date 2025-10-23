@@ -8,6 +8,7 @@ import java.time.*;
 import java.time.LocalDate;
 import Tiquetes.Tiquete;
 import Tiquetes.TiqueteSimple;
+import Tiquetes.estadoTiquete;
 import Tiquetes.TiqueteMultiple;
 
 public class EstadosFinancieros {
@@ -26,6 +27,7 @@ public class EstadosFinancieros {
 		}
 	}
 	
+	// funcion para administrador
 	public double totalGananciasPorFecha(LocalDate fechaMin, LocalDate fechaMax) {
 		int ganancias = 0;
 		for (Pago p: transacciones) {
@@ -39,6 +41,7 @@ public class EstadosFinancieros {
 		return ganancias;
 	}
 	
+	// funcion para administrador
 	public double totalGananciasPorEvento(int idE) {
 		double ganancias = 0.0;
 
@@ -68,7 +71,7 @@ public class EstadosFinancieros {
 	    return ganancias;
 	}
 	
-	
+	// funcion para administrador - incluye ganancias totales
 	public double totalGananciasPorOrganizador(int idO) {
 		double ganancias = 0.0;
 		
@@ -98,17 +101,6 @@ public class EstadosFinancieros {
 		}
 		return ganancias;
 	}
-	
-	
-	
-	public int verIngresos(int idO, LocalDate fechaMin, LocalDate fechaMax, int idE, int idL) {
-		// PODRA ver sus ingresos - el tiquete sin rercargos
-		return 0;
-	}
-	
-	public int porcentajeVenta(int idE, int idL) {
-		// TO DO
-		return 0;
-	}
+		
 
 }
