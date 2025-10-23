@@ -60,6 +60,36 @@ public class Cliente extends Usuario {
 	}
 	
 	public void transferirTiquete(int idT, String loginComprador, String passwordVendedor) {
+		//el vendedor va a ser el cliente que transfeira el tiquete
+		if(this.getPassword().equals(passwordVendedor)) {
+			
+			TiqueteSimple encontrado = null;
+			HashSet<Tiquete> misTiquetes = this.getTiquetes();
+			
+			for (Tiquete t : misTiquetes) {
+				if (t instanceof TiqueteSimple) {
+		            TiqueteSimple ts = (TiqueteSimple) t;
+		            if (ts.getIdT() == idT) {
+		                encontrado = ts;
+		            }
+		        } else if (t instanceof TiqueteMultiple) {
+		            TiqueteMultiple tm = (TiqueteMultiple) t;
+		            for (TiqueteSimple ts : tm.getEntradas()) {
+		                if (ts.getIdT() == idT) {
+		                    encontrado = ts;
+		                }
+		            }
+		        }
+			}
+			
+			if (encontrado.getPropietario().equals(this.getLogin())) {
+				encontrado.setPropietario(loginComprador);
+			}
+			
+		}
+	}
+	
+	public void transferirTiquete(int idT, String loginComprador, String passwordVendedor) {
 		//TO DO
 	}
 	
@@ -83,7 +113,7 @@ public class Cliente extends Usuario {
             throw new IllegalStateException("No hay suficientes tiquetes disponibles");
         }
 		
-		//Integrar ofertas - FALTA!!
+
 		ArrayList<Oferta> ofertasActivas = new ArrayList<>();
 		
 		Pago pago = new Pago(
