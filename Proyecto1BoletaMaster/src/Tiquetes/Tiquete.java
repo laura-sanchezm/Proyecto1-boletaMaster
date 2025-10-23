@@ -46,6 +46,8 @@ public abstract class Tiquete {
             return false;
         }
     }
+    
+    
     // Cambia el estado del tiquete a COMPRADO cuando se realiza el pago.
     public void marcarComprado() {
         this.status = estadoTiquete.COMPRADO;
