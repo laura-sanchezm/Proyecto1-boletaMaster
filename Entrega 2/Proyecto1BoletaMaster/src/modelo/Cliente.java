@@ -115,7 +115,7 @@ public class Cliente extends Usuario {
 		
 
 		ArrayList<Oferta> ofertasActivas = new ArrayList<>();
-		
+		//hola
 		Pago pago = new Pago(
                 admin.generarIdPago(),
                 LocalDate.now(),
