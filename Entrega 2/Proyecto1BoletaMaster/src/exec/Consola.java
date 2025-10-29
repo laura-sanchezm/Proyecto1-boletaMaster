@@ -156,6 +156,29 @@ public class Consola {
 					}
 					
 					int optCompra = Integer.parseInt(br.readLine().trim());
+					
+					
+					if(optCompra == 1 && !paquetes.isEmpty()){
+						System.out.println("Paquetes disponibles");
+						for(Tiquetes.TiqueteMultiple tm : paquetes) {
+							System.out.println("ID paquete : " + tm.getIdT() + " | Entradas" + tm.getEntradas().size() + " | Precio" + tm.getPrecioPaquete());
+						}
+						
+						System.out.println("Ingrese el ID del paquete que quiera comprar: ");
+						int idTM = Integer.parseInt(br.readLine().trim());
+						
+						Tiquetes.TiqueteMultiple paqueteSelection = null;
+						for(Tiquetes.TiqueteMultiple tm : paquetes) {
+							if(tm.getIdT() == idTM) {
+								paqueteSelection = tm;
+								break;
+							}
+						}
+						
+						if( paqueteSelection != null) {
+							
+						}
+					}
 				
 			}
 			catch(Exception e) {

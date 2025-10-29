@@ -14,7 +14,7 @@ public class Localidad {
 	private int capacidadL;
 	private HashSet<Tiquete> tiquetes;
 	private final HashSet<Integer> asientosOcupados;
-	private boolean oferta;
+	private Oferta oferta;
 	
 	
 	
@@ -26,7 +26,7 @@ public class Localidad {
 		this.capacidadL = capacidadL;
 		this.tiquetes = new HashSet<Tiquete>();
 		this.asientosOcupados = new HashSet<Integer>();
-		this.oferta = false;
+		this.oferta = null;
 	}
 
 
@@ -131,6 +131,11 @@ public class Localidad {
 	
 	
 	public boolean hayOferta() {
+		return oferta != null && oferta.estaVigente();
+	}
+	
+	
+	public Oferta getOferta() {
 		return oferta;
 	}
 	

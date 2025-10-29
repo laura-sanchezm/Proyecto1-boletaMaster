@@ -90,32 +90,49 @@ public class Cliente extends Usuario {
 	}
 	
 	
-	public void comprarTiquetes(Evento e, Map<Integer, Integer> localidadesYcantidades , metodoPago metodo, Administrador admin) {
-
-		ArrayList<Tiquete> tiquetesSeleccionados = new ArrayList<>();
-	
-		for(Map.Entry<Integer,Integer> entry : localidadesYcantidades.entrySet()) {
-			int idL = entry.getKey();
-			int cantidad = entry.getValue();
-			
-			Localidad loc = null;
-			for(Localidad l: e.getLocalidades()) {
-				if(l != null && l.getIdL() == idL) {
-					loc = l;
-					break;
-				}
-			}
-			
-			if(loc == null) {
-				System.out.println("La localidad con el ID " + idL + "no existe en el evento " + e.getNombreE());
-				continue;
-			}
-			
-			ArrayList<Tiquete> disponibles = new ArrayList<>();
-			for(Tiquete t: loc.getTiquetes()) {
-				
+	public void comprarTiqueteSimple(Evento evento, Localidad localidad, int cantidad, metodoPago metodo, Administrador admin) {
+		
+		if(!localidad.puedeVender()) {
+			throw new IllegalArgumentException("No se pueden vender mas tiquetes en esta localidad");
+		}
+		
+		
+		ArrayList<Tiquete> seleccionados = new ArrayList<>();
+		for(Tiquete t : localidad.getTiquetes()) {
+			if(t instanceof TiqueteSimple simple && simple.getStatus() == estadoTiquete.DISPONIBLE) {
+				seleccionados.add(simple);
+				if(seleccionados.size() == cantidad)break;
 			}
 		}
+		
+		if(seleccionados.size() < cantidad) {
+			throw new IllegalArgumentException("No hay suficientes tiquetes disponibles");
+		}
+		
+		ArrayList<Oferta> ofertas = new ArrayList<>();
+		if(localidad.hayOferta()) {
+			ofertas.add(localidad.getOferta());
+		}
+		
+		Pago pago = new Pago(admin.generarIdPago(), LocalDate.now(), 0.0, estadoPago.PENDIENTE, metodo, admin.getCargoServicio(), admin.getCargoImpresion(), seleccionados, ofertas );
+		
+		
+		boolean aprobado = pago.procesar();
+		if(!aprobado) 
+			throw new  IllegalStateException("El pago fue rechazado");
+			
+		if(metodo == metodoPago.SALDO) {
+			if(saldo < pago.getMonto()) {
+				throw new IllegalStateException("Saldo Insuficiente");
+			}
+			saldo -= pago.getMonto();
+		}
+		
+		for(Tiquete t: seleccionados) {
+			((TiqueteSimple) t).setPropietario(this.getLogin());
+		}
+		
+		System.out.println("Compra exitosa de" + cantidad + " tiquet(s) en" + localidad.getNombreL());
 	}
 	
 }
