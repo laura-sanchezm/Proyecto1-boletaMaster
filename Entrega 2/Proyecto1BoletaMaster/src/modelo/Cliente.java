@@ -93,7 +93,7 @@ public class Cliente extends Usuario {
 	public void comprarTiquetes(Evento e, Map<Integer, Integer> localidadesYcantidades , metodoPago metodo, Administrador admin) {
 
 		ArrayList<Tiquete> tiquetesSeleccionados = new ArrayList<>();
-		
+	
 		for(Map.Entry<Integer,Integer> entry : localidadesYcantidades.entrySet()) {
 			int idL = entry.getKey();
 			int cantidad = entry.getValue();
@@ -116,8 +116,6 @@ public class Cliente extends Usuario {
 				
 			}
 		}
-		
 	}
-	
 	
 }
