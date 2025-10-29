@@ -4,18 +4,18 @@ import java.util.HashSet;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import Tiquetes.Tiquete;
 import Tiquetes.TiqueteSimple;
+import Tiquetes.TiqueteMultiple;
 import Tiquetes.estadoTiquete;
-
-import Pago.Pago;
-import Pago.metodoPago;
-import Pago.estadoPago;
-
 import modelo.Evento;
 import modelo.Localidad;
 import modelo.Oferta;
+import pagos.Pago;
+import pagos.estadoPago;
+import pagos.metodoPago;
 
 public class Cliente extends Usuario {
 	
@@ -89,54 +89,33 @@ public class Cliente extends Usuario {
 		}
 	}
 	
-	public void transferirTiquete(int idT, String loginComprador, String passwordVendedor) {
-		//TO DO
-	}
 	
-	public void comprarTiquetes(Evento e, int idL, int cantidad, metodoPago metodo, Administrador admin) {
+	public void comprarTiquetes(Evento e, Map<Integer, Integer> localidadesYcantidades , metodoPago metodo, Administrador admin) {
 
-		//econtrar localidad en evento
-		Localidad loc = null;
-		for (Localidad l : e.getLocalidades()) {
-            if (l != null && l.getIdL() == idL) {
-                loc = l;
-            }
-        }
-		ArrayList<Tiquete> seleccionados = new ArrayList<>();
-		for (Tiquete t : loc.getTiquetes()) {
-            if (t instanceof TiqueteSimple && t.getStatus() == estadoTiquete.DISPONIBLE) {
-                seleccionados.add(t);
-            }
-        }
+		ArrayList<Tiquete> tiquetesSeleccionados = new ArrayList<>();
 		
-		if (seleccionados.size() < cantidad) {
-            throw new IllegalStateException("No hay suficientes tiquetes disponibles");
-        }
-		
-
-		ArrayList<Oferta> ofertasActivas = new ArrayList<>();
-		
-		Pago pago = new Pago(
-                admin.generarIdPago(),
-                LocalDate.now(),
-                0.0,                     
-                estadoPago.PENDIENTE,
-                metodo,
-                admin.getCargoServicio(),
-                admin.getCargoImpresion(),
-                seleccionados,
-                ofertasActivas
-        );
-		
-		boolean aprobado = pago.procesar();
-        if (!aprobado) {
-            throw new IllegalStateException("El pago fue rechazado.");
-        }
-        
-        //asignar propietario de tiquetes
-        for (Tiquete t : seleccionados) {
-            ((TiqueteSimple) t).setPropietario(this.getLogin());
-        }
+		for(Map.Entry<Integer,Integer> entry : localidadesYcantidades.entrySet()) {
+			int idL = entry.getKey();
+			int cantidad = entry.getValue();
+			
+			Localidad loc = null;
+			for(Localidad l: e.getLocalidades()) {
+				if(l != null && l.getIdL() == idL) {
+					loc = l;
+					break;
+				}
+			}
+			
+			if(loc == null) {
+				System.out.println("La localidad con el ID " + idL + "no existe en el evento " + e.getNombreE());
+				continue;
+			}
+			
+			ArrayList<Tiquete> disponibles = new ArrayList<>();
+			for(Tiquete t: loc.getTiquetes()) {
+				
+			}
+		}
 		
 	}
 	

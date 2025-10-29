@@ -1,14 +1,14 @@
 package Persistencia;
 
-import Pago.Pago;
-import Pago.estadoPago;
-import Pago.metodoPago;
 import Tiquetes.Tiquete;
 import Tiquetes.TiqueteSimple;
 import Tiquetes.estadoTiquete;
 import Tiquetes.TiqueteMultiple;
 import modelo.Oferta;
 import modelo.estadoEvento;
+import pagos.Pago;
+import pagos.estadoPago;
+import pagos.metodoPago;
 import modelo.Venue;
 import modelo.Evento;
 import modelo.Localidad;

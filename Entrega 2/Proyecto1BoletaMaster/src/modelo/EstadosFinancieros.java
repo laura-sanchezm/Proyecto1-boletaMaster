@@ -1,14 +1,12 @@
 package modelo;
 
 import java.util.*;
-
-import Pago.*;
-
 import java.time.*;
 import java.time.LocalDate;
 import Tiquetes.Tiquete;
 import Tiquetes.TiqueteSimple;
 import Tiquetes.estadoTiquete;
+import pagos.*;
 import Tiquetes.TiqueteMultiple;
 
 public class EstadosFinancieros {

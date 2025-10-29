@@ -28,16 +28,6 @@ public class TiqueteMultiple extends Tiquete {
     }
 
 
-    public double precioTotal(double cargoServicioPct, double cargoImpresionFijo) {
-        if (precioPaquete > 0) {
-            return precioPaquete;
-        }
-        double total = 0.0;
-        for (TiqueteSimple t : entradas) {
-            total += t.precioTotal(cargoServicioPct, cargoImpresionFijo); //se suma el precio de cada entrada simple.
-        }
-        return total;
-    }
 
 
     private boolean puedeTransferirseComoPaquete() {

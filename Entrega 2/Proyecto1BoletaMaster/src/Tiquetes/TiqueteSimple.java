@@ -39,12 +39,6 @@ public class TiqueteSimple extends Tiquete {
     }
 
 
- 
-    public double precioTotal(double cargoServicioPct, double cargoImpresionFijo) {
-        double base = localidad.getPrecioBase();
-        double cargoServicio = base * (cargoServicioPct / 100.0);
-        return base + cargoServicio + cargoImpresionFijo;
-    }
 
  
     

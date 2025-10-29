@@ -1,4 +1,4 @@
-package Pago;
+package pagos;
 
 import java.time.LocalDate;
 import Tiquetes.Tiquete;

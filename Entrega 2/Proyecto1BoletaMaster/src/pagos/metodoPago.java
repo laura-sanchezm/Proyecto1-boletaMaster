@@ -1,4 +1,4 @@
-package Pago;
+package pagos;
 
 public enum metodoPago {
 	

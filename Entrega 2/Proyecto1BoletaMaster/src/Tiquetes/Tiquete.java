@@ -34,8 +34,7 @@ public abstract class Tiquete {
     public void setStatus(estadoTiquete s) { this.status = s; }
     public void setTipo(String t) { this.tipo = t; }
 
-    // Cada subclase define cómo calcula el  precio y cómo se transfiere
-    public abstract double precioTotal(double cargoServicioPct, double cargoImpresionFijo);
+    // Cada subclase defin cómo se transfiere
     public abstract void transferir(String loginComprador);
 
     public boolean esDisponible() {
