@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import Tiquetes.Tiquete;
 import Tiquetes.TiqueteSimple;
@@ -109,12 +108,8 @@ public class Cliente extends Usuario {
 			throw new IllegalArgumentException("No hay suficientes tiquetes disponibles");
 		}
 		
-		ArrayList<Oferta> ofertas = new ArrayList<>();
-		if(localidad.hayOferta()) {
-			ofertas.add(localidad.getOferta());
-		}
 		
-		Pago pago = new Pago(admin.generarIdPago(), LocalDate.now(), 0.0, estadoPago.PENDIENTE, metodo, admin.getCargoServicio(), admin.getCargoImpresion(), seleccionados, ofertas );
+		Pago pago = new Pago(admin.generarIdPago(), LocalDate.now(), metodo, admin.getCargoServicio(), admin.getCargoImpresion(), seleccionados);
 		
 		
 		boolean aprobado = pago.procesar();
@@ -130,9 +125,55 @@ public class Cliente extends Usuario {
 		
 		for(Tiquete t: seleccionados) {
 			((TiqueteSimple) t).setPropietario(this.getLogin());
+			addTiquete(t);
 		}
 		
 		System.out.println("Compra exitosa de" + cantidad + " tiquet(s) en" + localidad.getNombreL());
+		System.out.println("Total de la compra: " + pago.getMonto());
+	}
+	
+	
+	
+
+	public void comprarTiqueteMultiple(Evento e, TiqueteMultiple paquete, metodoPago metodo, Administrador admin ) {
+		
+		if(paquete == null) {
+			throw new IllegalStateException("El paquete no puede ser nulo");
+		}
+		
+		List<TiqueteSimple> tiquetes = paquete.getEntradas();
+		
+		if(tiquetes == null || tiquetes.isEmpty()) {
+			throw new IllegalStateException("El paquete no contiene entradas validas");
+		}
+		
+		ArrayList<Tiquete> tiquetesCompra = new ArrayList<>();
+		tiquetesCompra.add(paquete);
+		
+		Pago pago = new Pago(admin.generarIdPago(), LocalDate.now(), metodo, admin.getCargoServicio(), admin.getCargoImpresion(), tiquetesCompra);
+		
+		boolean aprobado = pago.procesar();
+		
+		if(!aprobado) {
+			throw new IllegalStateException("El pago del paquete fue rechazado");
+		}
+		
+		if(metodo == metodoPago.SALDO) {
+			if(saldo < pago.getMonto()) {
+				throw new IllegalStateException("Saldo Insuficiente");
+			}
+			saldo -= pago.getMonto();
+		}
+		
+		paquete.setPropietario(this.getLogin());
+		for(TiqueteSimple s : tiquetes) {
+			s.setPropietario(this.getLogin());
+		}
+		
+		addTiquete(paquete);
+		
+		System.out.println("Compra exitosa del paquete para el evento: " + e.getNombreE());
+		System.out.println("Total de la compra: " + pago.getMonto());
 	}
 	
 }

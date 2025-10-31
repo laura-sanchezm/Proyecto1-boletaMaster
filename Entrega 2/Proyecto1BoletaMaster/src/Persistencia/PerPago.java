@@ -4,10 +4,8 @@ import Tiquetes.Tiquete;
 import Tiquetes.TiqueteSimple;
 import Tiquetes.estadoTiquete;
 import Tiquetes.TiqueteMultiple;
-import modelo.Oferta;
 import modelo.estadoEvento;
 import pagos.Pago;
-import pagos.estadoPago;
 import pagos.metodoPago;
 import modelo.Venue;
 import modelo.Evento;
@@ -33,8 +31,6 @@ public class PerPago {
 			JSONObject obj = new JSONObject();
 			obj.put("idPago", p.getIdPago());
 			obj.put("fecha", p.getFecha().toString());
-			obj.put("monto", p.getMonto());
-			obj.put("estado", p.getEstado().name());
 			obj.put("metodo", p.getMetodo().name());
 			obj.put("cargoServicio", p.getCargoServicio());
 			obj.put("cargoImpresion", p.getCargoImpresion());
@@ -144,20 +140,7 @@ public class PerPago {
 				}
 				tiquetesArray.put(tObj);
 			}
-			obj.put("tiquetes", tiquetesArray);
-			
-			JSONArray ofertasArray = new JSONArray();
-			for(Oferta o : p.getOfertasActivas()) {
-				JSONObject oObj = new JSONObject();
-				oObj.put("idOferta", o.getIdOferta());
-				oObj.put("idL", o.getIdL());
-				oObj.put("porcentaDescuento", o.getPorcentajeDescuento());
-				oObj.put("fechaInicio", o.getFechaInicio().toString());
-				oObj.put("fechaFin", o.getFechaFin().toString());
-				ofertasArray.put(oObj);
-			}
-			obj.put("ofertas", ofertasArray);
-			
+		
 			array.put(obj);
 		}
 		
@@ -176,8 +159,6 @@ public class PerPago {
 			
 			int idPago = obj.getInt("idPago");
 			LocalDate fecha = LocalDate.parse(obj.getString("fecha"));
-			double monto = obj.getDouble("monto");
-			estadoPago estado = estadoPago.valueOf(obj.getString("estado"));
 			metodoPago metodo = metodoPago.valueOf(obj.getString("metodo"));
 			double cargoServicio = obj.getDouble("cargoServicio");
 			double cargoImpresion = obj.getDouble("cargoImpresion");
@@ -305,22 +286,7 @@ public class PerPago {
 				
 			}
 			
-			ArrayList<Oferta> ofertas = new ArrayList<Oferta>();
-			if(obj.has("oferta")) {
-				JSONArray ofertasArray = obj.getJSONArray("ofertas");
-				for(int b = 0; b < ofertasArray.length(); b++) {
-					JSONObject oObj = ofertasArray.getJSONObject(b);
-					Oferta oferta = new Oferta(
-							oObj.getInt("idOferta"),
-							oObj.getInt("idL"),
-							oObj.getDouble("porcentajeDescuento"),
-							LocalDate.parse(oObj.getString("fechaInicio")),
-							LocalDate.parse(oObj.getString("fechaFin")));
-					ofertas.add(oferta);
-				}
-			}
-			
-			Pago pago = new Pago(idPago, fecha, monto, estado, metodo, cargoServicio, cargoImpresion, tiquetes, ofertas );
+			Pago pago = new Pago(idPago, fecha, metodo, cargoServicio, cargoImpresion, tiquetes);
 			lista.add(pago);
 		}
 		

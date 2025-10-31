@@ -19,28 +19,26 @@ public class Pago {
 	private double cargoServicio;
 	private double cargoImpresion;
 	private ArrayList<Tiquete> tiquetesComprados;
-	private ArrayList<Oferta> ofertasActivas;
 	
 	
 	
-	public Pago(int idPago, LocalDate fecha, double monto, estadoPago estado, metodoPago metodo, double cargoServicio,
-			double cargoImpresion, ArrayList<Tiquete> tiquetesComprados, ArrayList<Oferta> ofertasActivas) {
+	public Pago(int idPago, LocalDate fecha, metodoPago metodo, double cargoServicio,
+			double cargoImpresion, ArrayList<Tiquete> tiquetesComprados) {
 
 		this.idPago = idPago;
-		this.fecha = LocalDate.now();
+		this.fecha = fecha != null ? fecha : LocalDate.now();
 		this.monto = calcularMonto();
 		this.estado = estadoPago.PENDIENTE;
 		this.metodo = metodo;
 		this.cargoServicio = cargoServicio;
 		this.cargoImpresion = cargoImpresion;
 		this.tiquetesComprados = tiquetesComprados;
-		this.ofertasActivas = ofertasActivas;
 	}
 	
 	
 	public double calcularMonto() {
 		
-		double subtotal = 0;
+		double subtotal = 0.0;
 		
 		for(Tiquete t : tiquetesComprados) {
 			if(t instanceof TiqueteSimple) {
@@ -56,7 +54,7 @@ public class Pago {
 			}
 		}
 		
-		double cargos = (subtotal * cargoServicio / 100) + cargoImpresion;
+		double cargos = (subtotal * cargoServicio / 100.0) + cargoImpresion;
 		return subtotal + cargos;
 	}
 	
@@ -65,80 +63,75 @@ public class Pago {
 	private double calcularPrecioOferta(Localidad localidad) {
 		
 		double precioBase = localidad.getPrecioBase();
-		Oferta oferta = buscarOfertaParaLocalidad(localidad.getIdL());
 		
-		if(oferta != null && oferta.estaVigente()) {
-			double descuento = precioBase * (oferta.getPorcentajeDescuento()/100);
-			return precioBase - descuento;
+		if(localidad.hayOferta()) {
+			Oferta oferta = localidad.getOferta();
+			if(oferta != null && oferta.estaVigente()) {
+				double descuento = precioBase * (oferta.getPorcentajeDescuento()/100);
+				return precioBase - descuento;
+			}
 		}
 		
 		return precioBase;
 	}
 	
 	
-	private Oferta buscarOfertaParaLocalidad(int idL) {
-		
-		for(Oferta o : ofertasActivas) {
-			if(o.getIdL() == idL) {
-				return o;
-			}
-		}
-		return null;
-	}
 	
 	public boolean procesar() {
 		
-		boolean aprobado = !tiquetesComprados.isEmpty();
+		if(tiquetesComprados == null || tiquetesComprados.isEmpty()) {
+			estado = estadoPago.RECHAZADO;
+		}
 		
-		if(aprobado) {
-			estado = estadoPago.APROBADO;
-			for(Tiquete t : tiquetesComprados) {
-				if(t instanceof TiqueteSimple) {
-					TiqueteSimple simple = (TiqueteSimple) t;
-					if(simple.getLocalidad().isNumerada()) {
-						simple.asignarAsiento();
-					}
-					simple.setStatus(estadoTiquete.COMPRADO);
+	
+		estado = estadoPago.APROBADO;
+		
+		for(Tiquete t : tiquetesComprados) {
+			if(t instanceof TiqueteSimple) {
+				TiqueteSimple simple = (TiqueteSimple) t;
+				if(simple.getLocalidad().isNumerada()) {
+					simple.asignarAsiento();
 				}
-				else if(t instanceof TiqueteMultiple multiple) {
-					for(TiqueteSimple s : multiple.getEntradas()) {
-						if(s.getLocalidad().isNumerada()) {
-							s.asignarAsiento();
-						}
-						s.setStatus(estadoTiquete.COMPRADO);
+				simple.setStatus(estadoTiquete.COMPRADO);
+			}
+			else if(t instanceof TiqueteMultiple multiple) {
+				for(TiqueteSimple s : multiple.getEntradas()) {
+					if(s.getLocalidad().isNumerada()) {
+						s.asignarAsiento();
 					}
+					s.setStatus(estadoTiquete.COMPRADO);
 				}
 			}
-			return true;
+		}
+		return true;
 			
-		}
-		else {
-			estado = estadoPago.RECHAZADO;
-			return false;	
-		}
 	}
 	
 	
 	public void anular() {
-		if(estado == estadoPago.APROBADO) {
-			estado = estadoPago.ANULADO;
-			for(Tiquete t : tiquetesComprados) {
-				if(t instanceof TiqueteSimple) {
-					TiqueteSimple simple = (TiqueteSimple) t;
-					Localidad loc = simple.getLocalidad();
-					loc.reponerDevolucion(simple);
-					simple.setStatus(estadoTiquete.DISPONIBLE);
-				}
-				else if(t instanceof TiqueteMultiple) {
-					TiqueteMultiple multiple = (TiqueteMultiple) t;
-					for(TiqueteSimple s : multiple.getEntradas()) {
-						Localidad loc = s.getLocalidad();
-						loc.reponerDevolucion(s);
-						s.setStatus(estadoTiquete.DISPONIBLE);
-					}
+	
+		if(estado != estadoPago.APROBADO)return;
+		
+		estado = estadoPago.ANULADO;
+		
+		
+		for(Tiquete t : tiquetesComprados) {
+			if(t instanceof TiqueteSimple) {
+				TiqueteSimple simple = (TiqueteSimple) t;
+				Localidad loc = simple.getLocalidad();
+				loc.reponerDevolucion(simple);
+				simple.setStatus(estadoTiquete.DISPONIBLE);
+			}
+			else if(t instanceof TiqueteMultiple) {
+				TiqueteMultiple multiple = (TiqueteMultiple) t;
+				for(TiqueteSimple s : multiple.getEntradas()) {
+					Localidad loc = s.getLocalidad();
+					loc.reponerDevolucion(s);
+					s.setStatus(estadoTiquete.DISPONIBLE);
 				}
 			}
 		}
+		
 	}
 
 
@@ -220,18 +213,6 @@ public class Pago {
 	public void setTiquetesComprados(ArrayList<Tiquete> tiquetesComprados) {
 		this.tiquetesComprados = tiquetesComprados;
 	}
-
-
-	public ArrayList<Oferta> getOfertasActivas() {
-		return ofertasActivas;
-	}
-
-
-	public void setOfertasActivas(ArrayList<Oferta> ofertasActivas) {
-		this.ofertasActivas = ofertasActivas;
-	}
-	
-	
-	
+		
 
 }

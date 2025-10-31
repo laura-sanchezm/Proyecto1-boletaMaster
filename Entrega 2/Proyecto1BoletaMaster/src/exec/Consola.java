@@ -76,17 +76,13 @@ public class Consola {
 			System.out.println("===== Comprar Tiquetes =====\n");
 			try {
 				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				
 				System.out.println("¿Que metodo de pago desea utilizar? ");
 				System.out.println("1. Saldo");
 				System.out.println("2. Pasarela externa");
 				int optP = Integer.parseInt(br.readLine().trim());
 				
-				if(optP == 1) {
-					pagos.metodoPago metodo = pagos.metodoPago.SALDO;
-				}
-				else if(optP == 2) {
-					pagos.metodoPago metodo = pagos.metodoPago.PASARELA_EXTERNA;
-				}
+				metodoPago metodo = (optP == 1) ? pagos.metodoPago.SALDO : pagos.metodoPago.PASARELA_EXTERNA;
 				
 				System.out.println("Seleccione el evento al cual quiere asistir.");
 				
@@ -141,7 +137,7 @@ public class Consola {
 					ArrayList<Tiquetes.TiqueteMultiple> paquetes = new ArrayList<>();
 					for(Tiquetes.Tiquete t : localidadSelection.getTiquetes()) {
 						if(t instanceof Tiquetes.TiqueteMultiple && t.getStatus() == Tiquetes.estadoTiquete.DISPONIBLE ) {
-							paquetes.add((Tiquetes.TiqueteMultiple)t);
+							paquetes.add((Tiquetes.TiqueteMultiple) t);
 						}
 					}
 					
@@ -176,14 +172,25 @@ public class Consola {
 						}
 						
 						if( paqueteSelection != null) {
-							
+							cliente.comprarTiqueteMultiple(eventoSelection, paqueteSelection, metodo, admin);
+							System.out.println("Compra de paquete realizada exitosamente.\n");
+						}
+						else {
+							System.out.println("paquete no encontrado.\n");
 						}
 					}
-				
+					else if(optCompra == 2) {
+						System.out.println("\nCuantos tiquetes desea comprar en " + localidadSelection.getNombreL() + "?");
+						int cantidad = Integer.parseInt(br.readLine().trim());
+						
+						
+						cliente.comprarTiqueteSimple(eventoSelection, localidadSelection, cantidad, metodo, admin);
+					}
 			}
 			catch(Exception e) {
 				e.printStackTrace();
 			}
+			break;
 			
 		}
 	}
