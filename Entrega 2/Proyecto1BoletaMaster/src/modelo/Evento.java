@@ -143,6 +143,10 @@ public class Evento {
 		this.cancelacionSolicitada = cancelacionSolicitada;
 	}
 	
+	public boolean getCancelacionSolicitada() {
+		return cancelacionSolicitada;
+	}
+	
 	public boolean getDevolucionSolicitada() {
 		return cancelacionSolicitada;
 	}

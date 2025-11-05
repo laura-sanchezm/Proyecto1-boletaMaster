@@ -7,12 +7,12 @@ import Persistencia.*;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.util.Random;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 
@@ -191,7 +191,123 @@ public class Consola {
 				e.printStackTrace();
 			}
 			break;
+		case 4:
 			
+			
+		}
+	}
+	
+	
+	public static void menuOrganizador(int option, modelo.Organizador organizador, ArrayList<modelo.Evento> eventos, Administrador admin) {
+		switch(option) {
+		case 1: 
+			System.out.println("===== Creación de Evento =====\n");
+			try {
+				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				System.out.println("Ingrese el nombre del evento: ");
+				String nombreE = br.readLine().trim();
+				
+				DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+				DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
+				
+				System.out.println("Ingrese la fecha del evento (dd/MM/yyyy): ");
+				String fechaStr = br.readLine().trim();
+				LocalDate fecha = LocalDate.parse(fechaStr, formatoFecha);
+				
+				System.out.println("Ingresse la hora del evento (HH:mm formato 24h): ");
+				String horaStr = br.readLine().trim();
+				LocalTime hora = LocalTime.parse(horaStr, formatoHora);
+				
+				System.out.println("Ingrese el tipo de evento: ");
+				String tipo = br.readLine().trim();
+				
+				System.out.println("===== Venues Disponibles =====");
+				List<modelo.Venue> venues = admin.getVenues();
+				List<modelo.Venue> venuesAprobados = new ArrayList<>();
+				for(Venue v : venues) {
+					if(v.getAprobado() && v.consultarDisponibilidad(fecha)) {
+						venuesAprobados.add(v);
+						System.out.println((venuesAprobados.size()) + ". " + v.getNombreV() + "- Capacidad: " + v.getCapacidad());
+					}
+				}
+				
+				if(venuesAprobados.isEmpty()) {
+					System.out.println("No hay venues aprobados o disponibles para esta fecha");
+					return;
+				}
+				
+				System.out.println("Ingrese el numero del venue: ");
+				int optV = Integer.parseInt(br.readLine().trim());
+				Venue venueSelect = venuesAprobados.get(optV - 1);
+				
+				int idE = new Random().nextInt(100000);
+				Evento evento = organizador.crearEvento(idE, nombreE, fecha, hora, tipo, venueSelect);
+				
+				if(evento != null) {
+					eventos.add(evento);
+					organizador.getEventos().add(evento);
+					admin.registrarEvento(evento);
+					venueSelect.addFechaOcupada(fecha);
+					
+					System.out.println("Evento creado exitosamente");
+				}else {
+					System.out.println("Error al crear el evento. No se ocupará el venue.");
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void menuAdministrador(int option, Administrador admin, ArrayList<modelo.Evento> eventos) {
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			switch(option) {
+			case 1:
+				System.out.println("===== Registro de Venue =====\n");
+				System.out.println("Ingrese el nombre del venue: ");
+				String nombre = br.readLine().trim();
+				
+				System.out.println("Ingrese el tipo del venue: ");
+				String tipo = br.readLine().trim();
+				
+				System.out.println("Ingrese la ubicacion del venue: ");
+				String ubi = br.readLine().trim();
+				
+				System.out.println("Ingrese las restricciones del venue: ");
+				String restricciones = br.readLine().trim();
+				
+				System.out.println("Ingrese la capacidad del venue: ");
+				int capacidad = Integer.parseInt(br.readLine().trim());
+				
+				Venue v = new Venue(nombre, capacidad, tipo, ubi, restricciones);
+				admin.registrarVenue(v); 
+				break;
+			case 2:
+				System.out.println("===== Aprobación de Venue =====");
+				List<Venue> venues = admin.getVenues();
+				
+				if(venues.isEmpty()) {
+					System.out.println("No hay venues registrados");
+					break;
+				}
+				for(int i = 0; i < venues.size(); i++) {
+					System.out.println((i + 1) + ". " + venues.get(i).getNombreV() + "- Aprobado: " + venues.get(i).getAprobado());
+				}
+				System.out.println("Seleccione el nombre del venue a aprobar: ");
+				int optAP = Integer.parseInt(br.readLine().trim());
+				Venue venueSelect = venues.get((optAP -1));
+				
+				System.out.println("Ingrese la fecha que desea aprobar para este venue (dd/MM/yyy)");
+				DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+				LocalDate fechaAprob = LocalDate.parse(br.readLine().trim(), formato);
+				
+				admin.aprobarVenue(venueSelect.getNombreV(), fechaAprob);
+				break;
+			}
+				
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -229,14 +345,15 @@ public class Consola {
 						System.out.println("1. Consultar Saldo");
 						System.out.println("2. Recargar Saldo");
 						System.out.println("3. Comprar Tiquetes");
-						System.out.println("4. Transferir Tiquetes");
-						System.out.println("5. Solicitar Devolucion");
-						System.out.println("6. Salir");
+						System.out.println("4. Consultar Los Tiquetes Comprados");
+						System.out.println("5. Transferir Tiquetes");
+						System.out.println("6. Solicitar Devolucion");
+						System.out.println("7. Salir");
 						
 						int optC = Integer.parseInt(brC.readLine().trim());
 						menuCliente(optC, (modelo.Cliente) usuarioExistente  ,eventos);
 						
-						if(optC == 6) {
+						if(optC == 7) {
 							System.out.println("Saliendo de la aplicacion....");
 							break;
 						}
@@ -244,9 +361,47 @@ public class Consola {
 				}
 				else if(usuarioExistente instanceof modelo.Organizador) {
 					//TODO menu organizador
+					BufferedReader brO = new BufferedReader(new InputStreamReader(System.in));
+					while(true) {
+						System.out.println("===== Menu Organizador =====");
+						System.out.println("1. Crear Evento");
+						System.out.println("2. Asignar localidad a un evento");
+						System.out.println("2. Aplicar Oferta A Una Localidad");
+						System.out.println("3. Solicitar Cancelación");
+						System.out.println("4. Ver Ingresos");
+						System.out.println("5. Consultar Porcentaje Venta Total");
+						System.out.println("6. Consultar Porcentaje Venta Por Localidad");
+						System.out.println("7. Consultar Porcentaje Venta Por Evento");
+						System.out.println("8. Guardar localidades de un evento");
+						System.out.println("9. Sugerir Venue");
+						System.out.println("10. Salir");
+						
+						int optO = Integer.parseInt(brO.readLine().trim());
+						menuOrganizador(optO, (modelo.Organizador) usuarioExistente, eventos, admin);
+						
+						if(optO == 10) {
+							System.out.println("Saliendo de la aplicacion....");
+							break;
+						}
+					}
 				}
 				else if(usuarioExistente instanceof modelo.Administrador) {
 					//TODO menu Admin
+					BufferedReader brA = new BufferedReader(new InputStreamReader(System.in));
+					while(true) {
+						System.out.println("===== Menu Administrador =====");
+						System.out.println("1. Registrar Venue");
+						System.out.println("2. Aprobar Venue");
+						System.out.println("3. Salir");
+						
+						int optA = Integer.parseInt(brA.readLine().trim());
+						menuAdministrador(optA, admin, eventos);
+						
+						if(optA == 3) {
+							System.out.println("Saliendo de la aplicacion....");
+							break;
+						}
+					}
 				}
 			}
 			else {
@@ -281,9 +436,10 @@ public class Consola {
 							System.out.println("1. Consultar Saldo");
 							System.out.println("2. Recargar Saldo");
 							System.out.println("3. Comprar Tiquetes");
-							System.out.println("4. Transferir Tiquetes");
-							System.out.println("5. Solicitar Devolucion");
-							System.out.println("6. Salir");
+							System.out.println("4. Consultar Los Tiquetes Comprados");
+							System.out.println("5. Transferir Tiquetes");
+							System.out.println("6. Solicitar Devolucion");
+							System.out.println("7. Salir");
 							
 							int optC = Integer.parseInt(brC.readLine().trim());
 							menuCliente(optC, cliente  ,eventos);
@@ -303,6 +459,31 @@ public class Consola {
 						modelo.Organizador organizador = new modelo.Organizador(newLogin, newPassword, idO);
 						usuarios.add(organizador);;
 						System.out.println("Organizador creado exitosamente\n");
+						
+						BufferedReader brO = new BufferedReader(new InputStreamReader(System.in));
+						while(true) {
+							System.out.println("===== Menu Organizador =====");
+							System.out.println("1. Crear Evento");
+							System.out.println("2. Asignar localidad a un evento");
+							System.out.println("2. Aplicar Oferta A Una Localidad");
+							System.out.println("3. Solicitar Cancelación");
+							System.out.println("4. Ver Ingresos");
+							System.out.println("5. Consultar Porcentaje Venta Total");
+							System.out.println("6. Consultar Porcentaje Venta Por Localidad");
+							System.out.println("7. Consultar Porcentaje Venta Por Evento");
+							System.out.println("8. Guardar localidades de un evento");
+							System.out.println("9. Sugerir Venue");
+							System.out.println("10. Salir");
+							
+							int optO = Integer.parseInt(brO.readLine().trim());
+							menuOrganizador(optO, organizador, eventos, admin);
+							
+							
+							if(optO == 10) {
+								System.out.println("Saliendo del menu....");
+								break;
+							}
+						}
 					}
 					
 				}	

@@ -9,11 +9,7 @@ import Tiquetes.Tiquete;
 import Tiquetes.TiqueteSimple;
 import Tiquetes.TiqueteMultiple;
 import Tiquetes.estadoTiquete;
-import modelo.Evento;
-import modelo.Localidad;
-import modelo.Oferta;
 import pagos.Pago;
-import pagos.estadoPago;
 import pagos.metodoPago;
 
 public class Cliente extends Usuario {

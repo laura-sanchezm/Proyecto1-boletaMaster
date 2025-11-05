@@ -11,36 +11,47 @@ public class Administrador extends Usuario{
 	int cargoServicio;
 	int cargoImpresion;
 	private List<Evento> eventos;
+	private List<Venue> venues;
 	
 	
 	public Administrador(String login, String password) {
 		super(login, password);
 		this.eventos = new ArrayList<>();
+		this.venues = new ArrayList<>();
 	}
 	
-	public void aprobarVenue(int idE) {
-		for (Evento e : eventos) {
-			if (e.getIdE() == idE) {
-				e.setEstado(estadoEvento.CANCELADO);
+	
+	public void registrarVenue(Venue v) {
+		venues.add(v);
+	}
+	
+	public void aprobarVenue(String nombreV, LocalDate fechaEvento) {
+		for(Venue v : venues) {
+			if(v.getNombreV().equalsIgnoreCase(nombreV)) {
+				if(v.consultarDisponibilidad(fechaEvento)) {
+					v.setAprobado(true);
+					System.out.println(" El venue " + nombreV +" aprobado para el " + fechaEvento );
+				}
+				else {
+					System.out.println("El venue " + nombreV +" no esta disponible para esta fecha");
+				}
+				return;
 			}
 		}
+		System.out.println("No se encontró un venue con ese nombre");
 	}
 	
 	
+	
+	public void registrarEvento(Evento e) {
+		eventos.add(e);
+	}
 	
 	public void cancelarEvento(int idE) {
 		for (Evento e : eventos) {
 			if (e.getIdE() == idE) {
-				Venue v = e.getVenue();
-				//aprueba segun disponibilidad basado en fecha
-				LocalDate fecha = e.getFecha();
-				if (!v.consultarDisponibilidad(fecha)) {
-					v.setAprobado(false);
-				} else {
-					v.setAprobado(true);
-					v.addFechaOcupada(fecha);
-					e.setEstado(estadoEvento.PROGRAMADO);
-				}
+				e.setEstado(estadoEvento.CANCELADO);
+				System.out.println("Evento Cancelado");
 			}
 		}
 		
@@ -48,7 +59,7 @@ public class Administrador extends Usuario{
 	
 	public void aprobarCancelacion(int idE) {
 		for (Evento e : eventos) {
-			if(e.getDevolucionSolicitada()== true) {
+			if(e.getDevolucionSolicitada()) {
 				cancelarEvento(idE);
 			}
 		}
@@ -119,6 +130,10 @@ public class Administrador extends Usuario{
 
 	public List<Evento> getEventos() {
 		return eventos;
+	}
+	
+	public List<Venue> getVenues(){
+		return venues;
 	}
 
 	public void setEventos(List<Evento> eventos) {
