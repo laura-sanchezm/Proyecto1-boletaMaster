@@ -100,5 +100,17 @@ public class Venue {
 	public boolean consultarDisponibilidad(LocalDate fecha) {
 		return !fechasOcupadas.contains(fecha);
 	}
+	
+	
+	@Override
+	public String toString() {
+	    String estado = aprobado ? "Aprobado" : "No aprobado";
+	    return "Venue: " + nombreV +
+	           " | Tipo: " + tipoV +
+	           " | Capacidad: " + capacidad +
+	           " | Ubicación: " + ubicacion +
+	           " | Restricciones: " + restricciones +
+	           " | Estado: " + estado;
+	}
 
 }

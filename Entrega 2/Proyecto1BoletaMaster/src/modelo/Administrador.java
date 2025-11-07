@@ -2,8 +2,8 @@ package modelo;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
-import Tiquetes.Tiquete;
-import Tiquetes.estadoTiquete;
+import java.util.HashSet;
+import Tiquetes.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Administrador extends Usuario{
@@ -82,22 +82,91 @@ public class Administrador extends Usuario{
 		this.cargoImpresion = i;
 	}
 	
-	public boolean aprobarDevolucion(int idT) {
+	public boolean aprobarDevolucion(int idT, HashSet<Usuario> usuarios) {
 		for (Evento e : eventos) {
 			Tiquete t = e.buscarTiquete(idT);
-			if (t.getDevolucionSolicitada() == true) {
-				String motivo = t.getMotivoDevolucion();
+			if (t != null && t.getDevolucionSolicitada()) {
 				// aprueba devolucion si el motivo contiene la palabra hospital o viaje
+				String motivo = (t.getMotivoDevolucion().toLowerCase() !=  null) ? t.getMotivoDevolucion().toLowerCase():"";
 				if (motivo.contains("hospital") || motivo.contains("viaje")) {
-					t.setStatus(estadoTiquete.DISPONIBLE);
+					
+					Cliente clienteProp = null;
+					for(Usuario u : usuarios) {
+						if(u instanceof Cliente && u.getLogin().equals(t.getPropietario())) {
+							clienteProp = (Cliente) u;
+							break;
+						}
+					}
+					double montoReembolso = 0;
+					if(t instanceof TiqueteSimple simple)  {
+						montoReembolso = simple.getLocalidad().getPrecioBase();
+					}else if(t instanceof TiqueteMultiple multiple) {
+						montoReembolso = multiple.getPrecioPaquete();
+					}
+					
+					
+					if(clienteProp != null) {
+						clienteProp.recargarSaldo(montoReembolso);
+						System.out.println("Se reembolsaron $" + montoReembolso + " al cliente " + clienteProp.getLogin());
+					}else {
+						System.out.println("No se encontro el cliente propietario para el reembolso.");
+					}
+					
+					t.setStatus(estadoTiquete.DEVUELTO);
 					t.setDevolucionSolicitada(false);
 					t.setMotivoDevolucion(null);
-					t.setPropietario(null);
+					
+					if(t instanceof TiqueteSimple simple) {
+						simple.getLocalidad().reponerDevolucion(simple);
+					}
+					
+					System.out.println("Devolucion aprobada y tiquete repuesto (ID): " +idT);
 					return true;
+					
+				}else {
+					System.out.println("Motivo no valido. Devolucion rechazada");
+					t.setDevolucionSolicitada(false);
+					t.setMotivoDevolucion(null);
+					return false;
 				}
 			}
 		}
+		System.out.println("No se encontro el tiquete o no tiene solicitud pendiente");
 		return false;
+	}
+	
+	public List<Tiquete> listarDevolucionesPendientes() {
+	    List<Tiquete> pendientes = new ArrayList<>();
+
+	    for (Evento e : eventos) {
+	        for (Localidad loc : e.getLocalidades()) {
+	            for (Tiquete t : loc.getTiquetes()) {
+	                if (t.getDevolucionSolicitada()) {
+	                    pendientes.add(t);
+	                }
+	            }
+	        }
+	    }
+
+	    return pendientes;
+	}
+	
+	public void mostrarDevolucionesPendientes() {
+	    List<Tiquete> pendientes = listarDevolucionesPendientes();
+
+	    if (pendientes.isEmpty()) {
+	        System.out.println("No hay solicitudes de devolución pendientes.");
+	        return;
+	    }
+
+	    System.out.println("===== Solicitudes de Devolución Pendientes =====");
+	    for (Tiquete t : pendientes) {
+	        System.out.println("ID Tiquete: " + t.getIdT());
+	        System.out.println("Propietario: " + t.getPropietario());
+	        System.out.println("Motivo: " + t.getMotivoDevolucion());
+	        System.out.println("Tipo: " + t.getTipo());
+	        System.out.println("-----------------------------------");
+	    }
 	}
 	
 	public double verGananciasPorFecha(LocalDate fechaMin, LocalDate fechaMax, EstadosFinancieros ef) {

@@ -43,49 +43,85 @@ public class Cliente extends Usuario {
 	}
 	
 	public void solicitarDevolucion(int idT, String login, String motivo) {
+		
+		boolean encontrado = false;	
 		for (Tiquete t : tiquetes) {
 			if (t.getIdT() == idT) {
-				if (t.getPropietario() == login) {
-					t.setDevolucionSolicitada(true);
-					t.setMotivoDevolucion(motivo);
+				encontrado =  true;
+				if (t.getPropietario().equals(login)) {
+					if(t.getDevolucionSolicitada()) {
+						System.out.println("Ya existe una solicitud de devolucion para este tiquete");
+					}else {
+						t.setDevolucionSolicitada(true);
+						t.setMotivoDevolucion(motivo);
+						System.out.println("Solicitud de devolucion registrada para el tiquete " + idT);
+					}
+				}else {
+					System.out.println("No eres el propietario de este tiquete");
 				}
+				break;
 			}
+		}
+		if(!encontrado) {
+			System.out.println("No se encontro el tiquete con el ID proporcionado");
 		}
 		
 	}
 	
-	public void transferirTiquete(int idT, String loginComprador, String passwordVendedor) {
-		//el vendedor va a ser el cliente que transfeira el tiquete
-		if(this.getPassword().equals(passwordVendedor)) {
-			
-			TiqueteSimple encontrado = null;
-			HashSet<Tiquete> misTiquetes = this.getTiquetes();
-			
-			for (Tiquete t : misTiquetes) {
-				if (t instanceof TiqueteSimple) {
-		            TiqueteSimple ts = (TiqueteSimple) t;
-		            if (ts.getIdT() == idT) {
-		                encontrado = ts;
-		            }
-		        } else if (t instanceof TiqueteMultiple) {
-		            TiqueteMultiple tm = (TiqueteMultiple) t;
-		            for (TiqueteSimple ts : tm.getEntradas()) {
-		                if (ts.getIdT() == idT) {
-		                    encontrado = ts;
-		                }
-		            }
-		        }
-			}
-			
-			if (encontrado.getPropietario().equals(this.getLogin())) {
-				encontrado.setPropietario(loginComprador);
-			}
-			
+	
+	public void consultarDevoluciones() {
+	    boolean hayPendientes = false;
+	    for (Tiquete t : tiquetes) {
+	        if (t.getDevolucionSolicitada()) {
+	            System.out.println("Devolucion pendiente - Tiquete ID: " + t.getIdT() +
+	                               " | Motivo: " + t.getMotivoDevolucion());
+	            hayPendientes = true;
+	        }
+	    }
+	    if (!hayPendientes) {
+	        System.out.println("No tienes devoluciones pendientes o en proceso.");
+	    }
+	}
+	
+	public boolean transferirTiquete(int idT, String loginReceptor, String passwordConfirmacion) {
+		if(!this.getPassword().equals(passwordConfirmacion)) {
+			System.out.println("Contraseña incorrecta, No se puede transferir el tiquete");
+			return false;
+		}
+		
+		Tiquete tiquete = buscarTiquetePorId(idT);
+		if(tiquete == null) {
+			System.out.println("No se encontro ningun tiquete con ese Id");
+			return false;
+		}
+		
+		if(!tiquete.esTransferible()) {
+			System.out.println("Este tiquete no es transferible");
+			return false;
+		}
+		
+		if(tiquete.getStatus() == estadoTiquete.EXPIRADO) {
+			System.out.println("El tiquete ha expirado y no es transferible");
+			return false;
+		}
+		
+		try {
+			tiquete.transferir(loginReceptor);
+			System.out.println("Tiquete transferido exitosamente al usuario: " + loginReceptor);
+			return true;	
+		}catch(Exception e) {
+			System.out.println("Error al transferir el tiquete: " + e.getMessage());
+			return false;
 		}
 	}
 	
 	
 	public void comprarTiqueteSimple(Evento evento, Localidad localidad, int cantidad, metodoPago metodo, Administrador admin) {
+		
+		if(cantidad <= 0) {
+			throw new IllegalArgumentException("Cantidad invalida");
+		}
+		
 		
 		if(!localidad.puedeVender()) {
 			throw new IllegalArgumentException("No se pueden vender mas tiquetes en esta localidad");
@@ -95,6 +131,9 @@ public class Cliente extends Usuario {
 		ArrayList<Tiquete> seleccionados = new ArrayList<>();
 		for(Tiquete t : localidad.getTiquetes()) {
 			if(t instanceof TiqueteSimple simple && simple.getStatus() == estadoTiquete.DISPONIBLE) {
+				 System.out.println("Cliente compra ID " + simple.getIdT() +
+				            " con asiento actual: " + simple.getNumAsiento());
+				 
 				seleccionados.add(simple);
 				if(seleccionados.size() == cantidad)break;
 			}
@@ -120,11 +159,26 @@ public class Cliente extends Usuario {
 		}
 		
 		for(Tiquete t: seleccionados) {
-			((TiqueteSimple) t).setPropietario(this.getLogin());
-			addTiquete(t);
+			if(t instanceof TiqueteSimple simple) {
+				simple.setPropietario(this.getLogin());
+				
+				 if (simple.getLocalidad().isNumerada() && simple.getNumAsiento() == -1) {
+					 int nuevoAsiento = simple.getLocalidad().asignarAsientoDisponible();
+			            simple.setNumAsiento(nuevoAsiento);
+			            System.out.println("Asignando nuevo asiento en localidad " +
+			                simple.getLocalidad().getNombreL() + " → " + nuevoAsiento);
+			        }
+				 
+				System.out.println("Comprando tiquete ID " + simple.getIdT() +
+		                " con asiento final: " + simple.getNumAsiento() +
+		                " (localidad: " + simple.getLocalidad().getNombreL() + ")");
+
+				simple.setStatus(estadoTiquete.COMPRADO);
+				addTiquete(simple);
+			}
 		}
 		
-		System.out.println("Compra exitosa de" + cantidad + " tiquet(s) en" + localidad.getNombreL());
+		System.out.println("Compra exitosa de" + cantidad + " tiquete(s) en" + localidad.getNombreL());
 		System.out.println("Total de la compra: " + pago.getMonto());
 	}
 	
@@ -148,6 +202,13 @@ public class Cliente extends Usuario {
 		
 		Pago pago = new Pago(admin.generarIdPago(), LocalDate.now(), metodo, admin.getCargoServicio(), admin.getCargoImpresion(), tiquetesCompra);
 		
+		if(metodo == metodoPago.SALDO) {
+			if(saldo < pago.getMonto()) {
+				throw new IllegalStateException("Saldo Insuficiente");
+			}
+		}
+		
+		
 		boolean aprobado = pago.procesar();
 		
 		if(!aprobado) {
@@ -155,15 +216,21 @@ public class Cliente extends Usuario {
 		}
 		
 		if(metodo == metodoPago.SALDO) {
-			if(saldo < pago.getMonto()) {
-				throw new IllegalStateException("Saldo Insuficiente");
-			}
 			saldo -= pago.getMonto();
 		}
 		
+		
 		paquete.setPropietario(this.getLogin());
 		for(TiqueteSimple s : tiquetes) {
-			s.setPropietario(this.getLogin());
+			if(s instanceof TiqueteSimple simple) {
+				simple.setPropietario(this.getLogin());
+				simple.setStatus(estadoTiquete.COMPRADO);
+				
+				System.out.println("Entrada del paquete ID " + s.getIdT() + " → Asiento: " + s.getNumAsiento());
+				
+				
+				addTiquete(simple);
+			}
 		}
 		
 		addTiquete(paquete);
@@ -172,4 +239,25 @@ public class Cliente extends Usuario {
 		System.out.println("Total de la compra: " + pago.getMonto());
 	}
 	
+	
+	public Tiquete buscarTiquetePorId(int idT) {
+	    for (Tiquete t : tiquetes) {
+	        if (t.getIdT() == idT) {
+	            return t;
+	        }
+	        if (t instanceof TiqueteMultiple multiple) {
+	            for (TiqueteSimple entrada : multiple.getEntradas()) {
+	                if (entrada.getIdT() == idT) {
+	                    return entrada;
+	                }
+	            }
+	        }
+	    }
+	    return null;
+	}
+
+	
 }
+
+
+

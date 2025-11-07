@@ -1,9 +1,5 @@
 package Tiquetes;
 
-import src.Tiquetes.IllegalStateException;
-import src.Tiquetes.String;
-import src.Tiquetes.TiqueteMultiple;
-
 //Paquete Deluxe: es un paquete de entradas que NO se puede transferir.
 
 public class PaqueteDeluxe extends TiqueteMultiple {

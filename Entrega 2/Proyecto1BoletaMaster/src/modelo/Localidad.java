@@ -3,6 +3,7 @@ package modelo;
 import java.util.HashSet;
 import Tiquetes.Tiquete;
 import Tiquetes.TiqueteSimple;
+import java.util.Random;
 
 
 public class Localidad {
@@ -82,7 +83,12 @@ public class Localidad {
 	
 	
 	public boolean puedeVender() {
-		return tiquetes.size() < capacidadL;
+		for(Tiquete t : tiquetes) {
+			if(t.getStatus() == Tiquetes.estadoTiquete.DISPONIBLE) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public HashSet<Tiquete> getTiquetes(){
@@ -94,16 +100,22 @@ public class Localidad {
 	}
 	
 	public void reponerDevolucion(Tiquete tiquete) {
-		if(tiquetes.contains(tiquete)) {
-			if(numerada && tiquete instanceof TiqueteSimple) {
-				TiqueteSimple simple = (TiqueteSimple) tiquete;
-				if(simple.getNumAsiento() > 0) {
-					liberarAsiento(simple.getNumAsiento());
-				}
-				
-			}
-			tiquetes.remove(tiquete);
-		}
+		 if (tiquetes.contains(tiquete)) {
+		        
+		    
+		        if (numerada && tiquete instanceof TiqueteSimple simple) {
+		            if (simple.getNumAsiento() > 0) {
+		                liberarAsiento(simple.getNumAsiento());
+		                simple.setNumAsiento(-1); 
+		            }
+		        }
+
+		        
+		        tiquete.setStatus(Tiquetes.estadoTiquete.DISPONIBLE);
+		        tiquete.setPropietario(null);
+		        tiquete.setDevolucionSolicitada(false);
+		        tiquete.setMotivoDevolucion(null);
+		    }
 	}
 	
 	public int asignarAsientoDisponible() {
@@ -115,14 +127,15 @@ public class Localidad {
 			return -1;
 		}
 		
-		for(int i = 1 ; i <= capacidadL ; i++) {
-			if(!asientosOcupados.contains(i)) {
-				asientosOcupados.add(i);
-				return i;
-			}
-		}
+		Random random = new Random();
+		int numAsiento;
+		do {
+			numAsiento = random.nextInt(capacidadL) + 1;
+		}while(asientosOcupados.contains(numAsiento));
 		
-		return -1;
+		
+		asientosOcupados.add(numAsiento);
+		return numAsiento;
 	}
 	
 	public void liberarAsiento(int asiento) {

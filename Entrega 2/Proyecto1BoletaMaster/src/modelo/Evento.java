@@ -122,12 +122,20 @@ public class Evento {
 	}
 	
 	public void addLocalidad(Localidad localidad) {
-		localidades.add(localidad);
+		this.localidades.add(localidad);
 	}
 	
 	
 	public int aforoDisponible() {
 		return venue.getCapacidad();
+	}
+	
+	public int capacidadOcupada() {
+		int total = 0;
+		for(Localidad l : localidades) {
+			total += l.getCapacidadL();
+		}
+		return total;
 	}
 	
 	//funcion auxiliar

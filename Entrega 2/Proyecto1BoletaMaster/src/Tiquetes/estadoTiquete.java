@@ -6,6 +6,7 @@ public enum estadoTiquete {
 	DISPONIBLE,
 	COMPRADO,
 	TRANSFERIDO,
-	EXPIRADO
+	EXPIRADO,
+	DEVUELTO
 	
 }

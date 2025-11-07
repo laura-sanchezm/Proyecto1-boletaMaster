@@ -8,7 +8,6 @@ public class TiqueteSimple extends Tiquete {
 
     private Evento evento;
     private Localidad localidad;
-    private boolean enumerado;
     private int numAsiento;
 
 
@@ -17,31 +16,30 @@ public class TiqueteSimple extends Tiquete {
         super(idT, transferible, propietario, status, tipo);
         this.evento = evento;
         this.localidad = localidad;
-        this.enumerado = localidad.isNumerada();
-        this.numAsiento = -1; // sin asiento al crear
+        
+        if(localidad != null && localidad.isNumerada()) {
+        	this.numAsiento = localidad.asignarAsientoDisponible();
+        	System.out.println("Asignado asiento inicial " + numAsiento +
+                    " en localidad " + localidad.getNombreL());
+        }else {
+        	this.numAsiento = -1;
+        }
     }
 
     // Asigna asiento si la localidad es numerada y sihay cupos
     public void asignarAsiento() {
-        if (!localidad.isNumerada()) {
-            enumerado = false;
-            numAsiento = -1;
-            return;
-        }
-        if (numAsiento > 0) return; // si ya tenía asiento
+    	if (localidad != null && localidad.isNumerada() && numAsiento == -1) {
+            this.numAsiento = localidad.asignarAsientoDisponible();
+            
+            System.out.println("Asignando asiento en localidad " + localidad.getNombreL() + " → " + numAsiento);
 
-        int asiento = localidad.asignarAsientoDisponible();
-        if (asiento == -1) {
-            throw new IllegalStateException("No hay asientos disponibles.");
-        }
-        enumerado = true;
-        numAsiento = asiento;
+        } 
     }
 
 
 
  
-    
+    @Override
     public void transferir(String loginComprador) {
         if (!esTransferible()) {
             throw new IllegalStateException("No se puede transferir.");
@@ -60,11 +58,11 @@ public class TiqueteSimple extends Tiquete {
     // Getters y setters 
     public Evento getEvento() { return evento; }
     public Localidad getLocalidad() { return localidad; }
-    public boolean isEnumerado() { return enumerado; }
+    public String getPropietario() { return propietario; }
+    public boolean isEnumerado() { return localidad != null && localidad.isNumerada(); }
     public int getNumAsiento() { return numAsiento; }
     public void setEvento(Evento evento) { this.evento = evento; }
     public void setLocalidad(Localidad localidad) { this.localidad = localidad; }
-    public void setEnumerado(boolean enumerado) { this.enumerado = enumerado; }
     public void setNumAsiento(int numAsiento) { this.numAsiento = numAsiento; }
 
 

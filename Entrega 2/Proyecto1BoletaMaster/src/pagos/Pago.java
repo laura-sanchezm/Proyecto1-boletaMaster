@@ -27,12 +27,12 @@ public class Pago {
 
 		this.idPago = idPago;
 		this.fecha = fecha != null ? fecha : LocalDate.now();
-		this.monto = calcularMonto();
-		this.estado = estadoPago.PENDIENTE;
 		this.metodo = metodo;
 		this.cargoServicio = cargoServicio;
 		this.cargoImpresion = cargoImpresion;
-		this.tiquetesComprados = tiquetesComprados;
+		this.tiquetesComprados = (tiquetesComprados != null) ? tiquetesComprados : new ArrayList<>();
+		this.estado = estadoPago.PENDIENTE;
+		this.monto = calcularMonto();
 	}
 	
 	
@@ -101,6 +101,7 @@ public class Pago {
 					}
 					s.setStatus(estadoTiquete.COMPRADO);
 				}
+				multiple.setStatus(estadoTiquete.COMPRADO);
 			}
 		}
 		return true;
