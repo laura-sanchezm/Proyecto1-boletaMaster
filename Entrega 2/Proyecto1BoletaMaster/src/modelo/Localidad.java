@@ -152,6 +152,17 @@ public class Localidad {
 		return oferta;
 	}
 	
+	public void aplicarOferta(Oferta oferta) {
+		this.oferta = oferta;
+		if(oferta != null && oferta.estaVigente()) {
+			double nuevoPrecio = oferta.aplicarDescuento(precioBase);
+			System.out.println("Oferta aplicada en localidad " + nombreL + ": precio pasa de " + precioBase + " a " + nuevoPrecio);
+			this.precioBase = nuevoPrecio;
+		}else {
+			System.out.println("La oferta no esta viginte, no se aplica descuento");
+		}
+	}
+	
 	//funcion auxiliar
 		public Tiquete buscarTiquete(int idT) {
 			for (Tiquete t: tiquetes) {

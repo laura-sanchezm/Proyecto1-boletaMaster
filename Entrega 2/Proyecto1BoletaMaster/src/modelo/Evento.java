@@ -17,6 +17,8 @@ public class Evento {
 	private Venue venue;
 	private List<Localidad> localidades;
 	private boolean cancelacionSolicitada;
+	private boolean cancelacionAprobada;
+	private String motivoCancelacion;
 	private Organizador organizador; 
 
 	
@@ -153,6 +155,22 @@ public class Evento {
 	
 	public boolean getCancelacionSolicitada() {
 		return cancelacionSolicitada;
+	}
+	
+	public void setMotivoCancelacion(String motivo) {
+		this.motivoCancelacion = motivo;
+	}
+	
+	public String getMotivoCancelacion() {
+		return motivoCancelacion;
+	}
+	
+	public void setCancelacionAprobada(boolean cancelacionAprobada) {
+		this.cancelacionAprobada = cancelacionAprobada;
+	}
+	
+	public boolean getCancelacionAprobada() {
+		return cancelacionAprobada;
 	}
 	
 	public boolean getDevolucionSolicitada() {

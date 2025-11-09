@@ -19,8 +19,6 @@ public class TiqueteSimple extends Tiquete {
         
         if(localidad != null && localidad.isNumerada()) {
         	this.numAsiento = localidad.asignarAsientoDisponible();
-        	System.out.println("Asignado asiento inicial " + numAsiento +
-                    " en localidad " + localidad.getNombreL());
         }else {
         	this.numAsiento = -1;
         }

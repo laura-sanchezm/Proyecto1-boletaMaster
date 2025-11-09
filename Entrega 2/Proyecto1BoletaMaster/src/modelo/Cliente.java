@@ -131,8 +131,6 @@ public class Cliente extends Usuario {
 		ArrayList<Tiquete> seleccionados = new ArrayList<>();
 		for(Tiquete t : localidad.getTiquetes()) {
 			if(t instanceof TiqueteSimple simple && simple.getStatus() == estadoTiquete.DISPONIBLE) {
-				 System.out.println("Cliente compra ID " + simple.getIdT() +
-				            " con asiento actual: " + simple.getNumAsiento());
 				 
 				seleccionados.add(simple);
 				if(seleccionados.size() == cantidad)break;
@@ -158,6 +156,8 @@ public class Cliente extends Usuario {
 			saldo -= pago.getMonto();
 		}
 		
+		admin.getEstadosFinancieros().registrarTransaccion(pago);
+		
 		for(Tiquete t: seleccionados) {
 			if(t instanceof TiqueteSimple simple) {
 				simple.setPropietario(this.getLogin());
@@ -165,13 +165,8 @@ public class Cliente extends Usuario {
 				 if (simple.getLocalidad().isNumerada() && simple.getNumAsiento() == -1) {
 					 int nuevoAsiento = simple.getLocalidad().asignarAsientoDisponible();
 			            simple.setNumAsiento(nuevoAsiento);
-			            System.out.println("Asignando nuevo asiento en localidad " +
-			                simple.getLocalidad().getNombreL() + " → " + nuevoAsiento);
 			        }
 				 
-				System.out.println("Comprando tiquete ID " + simple.getIdT() +
-		                " con asiento final: " + simple.getNumAsiento() +
-		                " (localidad: " + simple.getLocalidad().getNombreL() + ")");
 
 				simple.setStatus(estadoTiquete.COMPRADO);
 				addTiquete(simple);
@@ -219,6 +214,8 @@ public class Cliente extends Usuario {
 			saldo -= pago.getMonto();
 		}
 		
+		admin.getEstadosFinancieros().registrarTransaccion(pago);
+		
 		
 		paquete.setPropietario(this.getLogin());
 		for(TiqueteSimple s : tiquetes) {
@@ -226,7 +223,6 @@ public class Cliente extends Usuario {
 				simple.setPropietario(this.getLogin());
 				simple.setStatus(estadoTiquete.COMPRADO);
 				
-				System.out.println("Entrada del paquete ID " + s.getIdT() + " → Asiento: " + s.getNumAsiento());
 				
 				
 				addTiquete(simple);

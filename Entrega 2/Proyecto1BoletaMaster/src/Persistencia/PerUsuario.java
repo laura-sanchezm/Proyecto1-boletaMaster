@@ -6,8 +6,6 @@ import modelo.Organizador;
 import modelo.Administrador;
 import modelo.Evento;
 import Tiquetes.Tiquete;
-import Tiquetes.TiqueteSimple;
-import Tiquetes.TiqueteMultiple;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
@@ -84,66 +82,37 @@ public class PerUsuario {
 		JSONArray array = Persistencia.cargarJSONArray(ARCHIVO);
 		
 		for(int i = 0; i < array.length();i++) {
-			JSONObject obj = array.getJSONObject(i);
-            String login = obj.getString("login");
-            String password = obj.getString("password");
-            String tipo = obj.getString("tipo");
-            
+			  JSONObject obj = array.getJSONObject(i);
+	            String login = obj.getString("login");
+	            String password = obj.getString("password");
+	            String tipo = obj.getString("tipo");
 
-            if (tipo.equals("organizador")) {
-                int idO = obj.getInt("idO");
-                Organizador o = new Organizador(login, password, idO);
-                
-                if(obj.has("eventos")) {
-                	JSONArray eventosArray = obj.getJSONArray("eventos");
-                    if (eventosArray != null) {
-                        for (int j = 0; j < eventosArray.length(); j++) {
-                            int idEvento = eventosArray.getInt(j);
-                            Evento e = buscarEventoPorIdEnTiquetes(tiquetesGlobales, idEvento);
-                            if (e != null) o.getEventos().add(e);
-                        }
-                    }
-                    usuarios.add(o);
-                }
-                
-                else if(tipo.equals("administrador")) {
-                    Administrador admin = new Administrador(login, password);
-                    admin.fijarCargoServicio(obj.getInt("cargoServicio"));
-                    admin.fijarCargoImpresion(obj.getInt("cargoImpresion"));
-
-                    if (obj.has("eventos")) {
-                        JSONArray eventosArray = obj.getJSONArray("eventos");
-                        for (int j = 0; j < eventosArray.length(); j++) {
-                            int idEvento = eventosArray.getInt(j);
-                            Evento e = buscarEventoPorIdEnTiquetes(tiquetesGlobales, idEvento);
-                            if (e != null) admin.getEventos().add(e);
-                        }
-                    }
-
-                    usuarios.add(admin);
-                }
-                else if(tipo.equals("cliente")) {
-                    Cliente c = new Cliente(login, password);
-
-                    if (obj.has("saldo")) {
-                        double saldo = obj.getDouble("saldo");
-                        c.recargarSaldo(saldo);
-                    }
-
-                    if (obj.has("tiquetes")) {
-                        JSONArray tiquetesArray = obj.getJSONArray("tiquetes");
-                        for (int j = 0; j < tiquetesArray.length(); j++) {
-                            int idT = tiquetesArray.getInt(j);
-                            Tiquete t = buscarTiquetePorId(tiquetesGlobales, idT);
-                            if (t != null) c.addTiquete(t);
-                        }
-                    }
-
-                    usuarios.add(c);
-                }
-                else {
-                	usuarios.add(new Usuario(login, password));
-                }
+	            switch (tipo) {
+	                case "administrador" -> {
+	                    Administrador a = new Administrador(login, password);
+	                    a.fijarCargoServicio(obj.optInt("cargoServicio", 0));
+	                    a.fijarCargoImpresion(obj.optInt("cargoImpresion", 0));
+	                    usuarios.add(a);
+	                }
+	                case "organizador" -> {
+	                    int idO = obj.getInt("idO");
+	                    Organizador o = new Organizador(login, password, idO);
+	                    usuarios.add(o);
+	                }
+	                case "cliente" -> {
+	                    Cliente c = new Cliente(login, password);
+	                    c.recargarSaldo(obj.optDouble("saldo", 0));
+	                    if (obj.has("tiquetes")) {
+	                        JSONArray tiquetesArray = obj.getJSONArray("tiquetes");
+	                        for (int j = 0; j < tiquetesArray.length(); j++) {
+	                            int idT = tiquetesArray.getInt(j);
+	                            Tiquete t = buscarTiquetePorId(tiquetesGlobales, idT);
+	                            if (t != null) c.addTiquete(t);
+	                        }
+	                    }
+	                    usuarios.add(c);
+	                }
+	                default -> usuarios.add(new Usuario(login, password));
             }
 		}
 		
@@ -159,24 +128,6 @@ public class PerUsuario {
         return null;
     }
 
-    private static Evento buscarEventoPorIdEnTiquetes(List<Tiquete> tiquetes, int idEvento) {
-        for (Tiquete t : tiquetes) {
-            if (t instanceof TiqueteSimple) {
-                TiqueteSimple s = (TiqueteSimple) t;
-                if (s.getEvento().getIdE() == idEvento) {
-                    return s.getEvento();
-                }
-            } else if (t instanceof TiqueteMultiple) {
-                TiqueteMultiple m = (TiqueteMultiple) t;
-                for (TiqueteSimple s : m.getEntradas()) {
-                    if (s.getEvento().getIdE() == idEvento) {
-                        return s.getEvento();
-                    }
-                }
-            }
-        }
-        return null;
-    }
 }
 
 

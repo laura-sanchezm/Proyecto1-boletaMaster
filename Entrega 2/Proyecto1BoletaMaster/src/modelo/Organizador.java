@@ -9,10 +9,11 @@ import Tiquetes.estadoTiquete;
 
 import java.time.*;
 
-public class Organizador extends Usuario{
+public class Organizador extends Cliente{
 	
 	private int idO;
 	private List<Evento> eventos;
+	private static int contadorOfertas = 1;
 	
 	
 	public Organizador(String login, String password, int id) {
@@ -48,56 +49,79 @@ public class Organizador extends Usuario{
 	}
 	
 	
-	public void aplicarOferta(int idO, int idL, int porcentaje, LocalDate fechaInicio, LocalDate fechaFin) {
+	public void aplicarOferta(int idL, double porcentaje, LocalDate fechaInicio, LocalDate fechaFin) {
 		Localidad target = null;
-	    for (Evento e : eventos) {
-	        if (e == null || e.getLocalidades() == null) continue;
-	        for (Localidad l : e.getLocalidades()) {
-	            if (l != null && l.getIdL() == idL) {
-	                target = l;
-	                
-	            }
-	        }
-	    }
-	    
-	    Oferta nueva = new Oferta(idO, idL, porcentaje, fechaInicio, fechaFin);
+		
+		for(Evento e : eventos) {
+			for(Localidad l : e.getLocalidades()) {
+				if(l.getIdL() == idL) {
+					target = l;
+					break;
+				}
+			}
+			if(target != null)break;
+		}
+		if(target == null) {
+			System.out.println("No se encontro la localidad con el ID: " + idL);
+			return;
+		}
+		
+		int idOferta = contadorOfertas++;
+		Oferta nueva = new Oferta(idOferta, idL, porcentaje /100, fechaInicio, fechaFin);
+		target.aplicarOferta(nueva);
+		System.out.println("Oferta #" + idOferta + " creada y aplicada correctamente a la localidad " + target.getNombreL());
 	}
 	
-	public void solicitarCancelacion(int idE) {
-		// TO DO - PUEDE SOLICITAR POR INSOLVENCIA
-		for (Evento e: eventos) {
-			if(e.getIdE() == idE) {
-				e.setCancelacionSolicitada(true);
-			}
+	public void solicitarCancelacion(int idE, String motivo) {
+		Evento evento = buscarEventoPorId(idE);
+		
+		if(evento == null) {
+			System.out.println("No se encontro el evento on el ID proporcionado.");
+			return;
 		}
+		
+		if(evento.getEstado() == estadoEvento.CANCELADO) {
+			System.out.println("El evneto ya fue cancelado");
+			return;
+		}
+		
+		evento.setCancelacionSolicitada(true);
+		evento.setMotivoCancelacion(motivo);
+		 System.out.println("Solicitud de cancelación enviada para el evento " + evento.getNombreE() + " con motivo: " + motivo);
 	}
 	
 	public double verIngresos() {
 		double ingresos = 0.0;
-		List<Evento> eventos = this.getEventos();
-		for (Evento e: eventos) {
-			List<Localidad> localidades = e.getLocalidades();
-			for (Localidad loc : localidades) {
+		
+		for(Evento e : this.eventos) {
+			if(e.getEstado() == estadoEvento.CANCELADO) {
+				continue;
+			}
+			
+			for(Localidad loc : e.getLocalidades()) {
 				HashSet<Tiquete> tiquetes = loc.getTiquetes();
-				for (Tiquete t : tiquetes) {
-					if (t instanceof TiqueteSimple) {
-						TiqueteSimple ts = (TiqueteSimple) t;
-	                    if (ts.getStatus() == estadoTiquete.COMPRADO) {
-	                        ingresos += loc.getPrecioBase(); // sin cargos ni descuentos
-	                    }
-					} else if (t instanceof TiqueteMultiple multiple) {
-						for (TiqueteSimple ts: multiple.getEntradas()) {
-							if (ts.getStatus() == estadoTiquete.COMPRADO) {
-	                            Localidad locSimple = ts.getLocalidad();
-	                            ingresos += locSimple.getPrecioBase();
-	                        }
+				
+				for(Tiquete t : tiquetes) {
+					if(t.getStatus() == estadoTiquete.COMPRADO) {
+						if(t.getPropietario().equals(this.getLogin())) {
+							continue;
+						}
+						
+						if(t instanceof TiqueteSimple simple) {
+							ingresos += simple.getLocalidad().getPrecioBase();
+						}else if(t instanceof TiqueteMultiple multiple) {
+							for(TiqueteSimple s : multiple.getEntradas()) {
+								if(s.getStatus() == estadoTiquete.COMPRADO && !s.getPropietario().equals(this.getLogin())) {
+									ingresos +=  s.getLocalidad().getPrecioBase();
+								}
+							}
 						}
 					}
 				}
 			}
 		}
-	 
-		return ingresos;
+		System.out.println("El organizador " + this.getLogin() + " ha generado ingresos de $" + ingresos);
+	    return ingresos;
 	}
 	
 	
@@ -130,6 +154,7 @@ public class Organizador extends Usuario{
         int capacidad = 0;
 
         for (Evento e : this.eventos) {
+        	if(e.getEstado() == estadoEvento.CANCELADO) continue;
             for (Localidad l : e.getLocalidades()) {
                 vendidos  += contarVendidos(l);
                 capacidad += l.getCapacidadL();
@@ -149,12 +174,12 @@ public class Organizador extends Usuario{
         int capacidad = 0;
 
         for (Evento e : this.eventos) {
-            if (e.getIdE() == idE) {
+            if (e.getIdE() == idE && e.getEstado() != estadoEvento.CANCELADO) {
             	for (Localidad l : e.getLocalidades()) {
-                    if (l == null) continue;
                     vendidos  += contarVendidos(l);
                     capacidad += l.getCapacidadL();
                 }
+            	break;
             }
 
         }
@@ -171,6 +196,7 @@ public class Organizador extends Usuario{
         int capacidad = 0;
 
         for (Evento e : this.eventos) {
+        	if(e.getEstado() == estadoEvento.CANCELADO) continue;
             for (Localidad l : e.getLocalidades()) {
                 if (l.getIdL() == idL) {
                     vendidos  += contarVendidos(l);

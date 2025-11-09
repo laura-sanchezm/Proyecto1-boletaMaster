@@ -31,7 +31,7 @@ public class PerTiquete {
 			tObj.put("propietario", t.getPropietario());
 			tObj.put("estado", t.getStatus().name());
 			tObj.put("transferibilidad", t.esTransferible());
-			tObj.put("tipo", t.getTipo());
+			tObj.put("tipo", t.getTipo().toUpperCase());
 			
 			if(t instanceof TiqueteSimple) {
 				TiqueteSimple simple = (TiqueteSimple) t;
@@ -56,7 +56,7 @@ public class PerTiquete {
 				JSONObject orObj = new JSONObject();
 				orObj.put("login", e.getOrganizador().getLogin());
 				orObj.put("password", e.getOrganizador().getPassword());
-				orObj.put("idO", e.getOrganizador().getPassword());
+				orObj.put("idO", e.getOrganizador().getIdO());
 				eObj.put("organizador", orObj);
 				
 				tObj.put("evento", eObj);
@@ -106,7 +106,7 @@ public class PerTiquete {
 					JSONObject orsObj = new JSONObject();
 					orsObj.put("login", s.getEvento().getOrganizador().getLogin());
 					orsObj.put("password", s.getEvento().getOrganizador().getPassword());
-					orsObj.put("idO", s.getEvento().getOrganizador().getPassword());
+					orsObj.put("idO", s.getEvento().getOrganizador().getIdO());
 					esObj.put("organizador", orsObj);
 					
 					sObj.put("evento", esObj);
@@ -131,13 +131,13 @@ public class PerTiquete {
 		JSONArray array = Persistencia.cargarJSONArray(ARCHIVO);
 		
 		for(int i = 0; i < array.length(); i++ ) {
-			JSONObject tObj = new JSONObject();
+			JSONObject tObj = array.getJSONObject(i);
 			String tipo = tObj.getString("tipo");
 			
-			if(tipo.equals("simple")) {
+			if(tipo.equalsIgnoreCase("simple")) {
                 int id = tObj.getInt("idTiquete");
                 String propietario = tObj.getString("propietario");
-                boolean transferible = tObj.getBoolean("transferible");
+                boolean transferible = tObj.optBoolean("transferibilidad", false);
                 estadoTiquete estado = estadoTiquete.valueOf(tObj.getString("estado"));
 
                 JSONObject eObj = tObj.getJSONObject("evento");
@@ -183,10 +183,10 @@ public class PerTiquete {
                 }
                 lista.add(simple);
 			}
-            else if (tipo.equals("multiple")) {
+            else if (tipo.equalsIgnoreCase("multiple")) {
                 int idM = tObj.getInt("idTiquete");
                 String propietarioM = tObj.getString("propietario");
-                boolean transferibleM = tObj.getBoolean("transferible");
+                boolean transferibleM = tObj.optBoolean("transferibilidad", tObj.optBoolean("transferibilidad", false));
                 estadoTiquete estadoM = estadoTiquete.valueOf(tObj.getString("estado"));
 
                 TiqueteMultiple multiple = new TiqueteMultiple(idM, transferibleM, propietarioM, estadoM, "multiple");
@@ -197,7 +197,7 @@ public class PerTiquete {
 
                     int id = sObj.getInt("idTiquete");
                     String propietario = sObj.getString("propietario");
-                    boolean transferible = sObj.getBoolean("transferible");
+                    boolean transferible = sObj.getBoolean("transferibilidad");
                     estadoTiquete estado = estadoTiquete.valueOf(sObj.getString("estado"));
 
                     JSONObject esObj = sObj.getJSONObject("evento");

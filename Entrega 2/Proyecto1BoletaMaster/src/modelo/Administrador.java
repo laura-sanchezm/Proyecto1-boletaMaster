@@ -8,16 +8,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Administrador extends Usuario{
 	
-	int cargoServicio;
-	int cargoImpresion;
+	double cargoServicio;
+	double cargoImpresion;
 	private List<Evento> eventos;
 	private List<Venue> venues;
+	private EstadosFinancieros estadosFinancieros;
 	
 	
 	public Administrador(String login, String password) {
 		super(login, password);
 		this.eventos = new ArrayList<>();
 		this.venues = new ArrayList<>();
+		this.estadosFinancieros = new EstadosFinancieros();
 	}
 	
 	
@@ -57,12 +59,37 @@ public class Administrador extends Usuario{
 		
 	}
 	
-	public void aprobarCancelacion(int idE) {
-		for (Evento e : eventos) {
-			if(e.getDevolucionSolicitada()) {
-				cancelarEvento(idE);
+	public void aprobarCancelacion(int idE, HashSet<Usuario> usuarios) {
+		for(Evento e : eventos) {
+			if(e.getIdE() == idE && e.getCancelacionSolicitada()) {
+				e.setEstado(estadoEvento.CANCELADO);
+				e.setCancelacionSolicitada(false);
+				e.setCancelacionAprobada(true);
+				System.out.println("Cancelacion del evento " + e.getNombreE() + " aprobada.");
+				
+				for(Localidad loc : e.getLocalidades()) {
+					for(Tiquete t : loc.getTiquetes()) {
+						if(t.getStatus() == estadoTiquete.COMPRADO) {
+							for(Usuario u : usuarios) {
+								if(u instanceof Cliente cliente && cliente.getLogin().equals(t.getPropietario())) {
+									double monto = (t instanceof TiqueteSimple s) ? s.getLocalidad().getPrecioBase() : (t instanceof TiqueteMultiple m) ? m.getPrecioPaquete() : 0;
+									cliente.recargarSaldo(monto);
+									t.setStatus(estadoTiquete.DEVUELTO);
+									System.out.println("Reembolso de $" + monto + " al cliente " + cliente.getLogin());
+								}
+							}
+						}
+					}
+				}
+				
+				Organizador org = e.getOrganizador();
+				  System.out.println("Notificacion enviada al organizador '" + org.getLogin() + "':");
+		            System.out.println("La cancelacion de tu evento '" + e.getNombreE() + "' fue aprobada.\n");
+
+		            return; 
 			}
 		}
+		System.out.println("No se encontro el evento o no tiene cancelacion pendiente.");
 	}
 	
 	// generador de id para pago
@@ -74,11 +101,11 @@ public class Administrador extends Usuario{
 	
     
     
-	public void fijarCargoServicio(int s) {
-		this.cargoServicio = s;
+	public void fijarCargoServicio(double s) {
+		this.cargoServicio = s /100;
 	}
 	
-	public void fijarCargoImpresion(int i) {
+	public void fijarCargoImpresion(double i) {
 		this.cargoImpresion = i;
 	}
 	
@@ -181,20 +208,12 @@ public class Administrador extends Usuario{
 		return ef.totalGananciasPorOrganizador(idO);
 	}
 
-	public int getCargoServicio() {
+	public double getCargoServicio() {
 		return cargoServicio;
 	}
 
-	public void setCargoServicio(int cargoServicio) {
-		this.cargoServicio = cargoServicio;
-	}
-
-	public int getCargoImpresion() {
+	public double getCargoImpresion() {
 		return cargoImpresion;
-	}
-
-	public void setCargoImpresion(int cargoImpresion) {
-		this.cargoImpresion = cargoImpresion;
 	}
 
 	public List<Evento> getEventos() {
@@ -207,6 +226,10 @@ public class Administrador extends Usuario{
 
 	public void setEventos(List<Evento> eventos) {
 		this.eventos = eventos;
+	}
+	
+	public EstadosFinancieros getEstadosFinancieros() {
+		return estadosFinancieros;
 	}
 	
 	
