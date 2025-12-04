@@ -18,6 +18,10 @@ import java.time.format.DateTimeFormatter;
 
 public class Consola {
 	
+	public static HashSet<Usuario> usuariosGUI = new HashSet<>();
+	public static ArrayList<Evento> eventosGUI = new ArrayList<>();
+	public static Administrador adminGUI;
+	
 	
 	public static Usuario buscarUsuario(HashSet<Usuario> usuarios, String login, String password){
 		for(Usuario u : usuarios) {
@@ -1022,6 +1026,11 @@ public class Consola {
 	            }
 
 	            admin.setEventos(eventos);
+	            
+	            usuariosGUI = usuarios;
+	            eventosGUI = eventos;
+	            adminGUI = admin;
+	            
 	            Random random = new Random();
 
 	         
@@ -1153,7 +1162,7 @@ public class Consola {
 	                        usuarios.add(nuevoCliente);
 	                        System.out.println("Cliente creado exitosamente.");
 	                    } else if (tipo == 2) {
-	                        int idO = random.nextInt(100000);
+	                        int idO = random.nextInt(100000);	
 	                        while (buscarOrganizadorPorId(usuarios, idO) != null) {
 	                            idO = random.nextInt(100000);
 	                        }
