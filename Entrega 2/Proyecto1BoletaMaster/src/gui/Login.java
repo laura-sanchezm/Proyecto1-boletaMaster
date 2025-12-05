@@ -172,7 +172,7 @@ public class Login extends JFrame {
 	        } else if (usuario instanceof modelo.Administrador a) {
 	            JOptionPane.showMessageDialog(this, "Bienvenido Administrador!");
 	            this.dispose();
-	            //new MenuAdministrador(a).setVisible(true);
+	            new MenuAdmin(a).setVisible(true);
 	        }
 
 	}
