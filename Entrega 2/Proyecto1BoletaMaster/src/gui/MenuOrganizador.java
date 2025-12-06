@@ -1,737 +1,1085 @@
 package gui;
 
-
-import java.awt.Color;
-import java.awt.Font;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.awt.event.ActionEvent;
-import java.awt.CardLayout;
-import javax.swing.JLayeredPane;
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import javax.swing.JOptionPane;
-import java.util.Random;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import java.util.List;
+
+import modelo.*;
+import Tiquetes.*;
 
 public class MenuOrganizador extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private modelo.Organizador organizador;
+	private ArrayList<JPanel> paneles;
 	
-	
-	private ArrayList<JPanel> paneles = new ArrayList<>();
-	private JPanel panelMenu;
-	private JPanel panelOrganizarE;
-	private JPanel panelCreacionE_1;
-	private JPanel panelCreacionE_2;
-	private JPanel panelAsignarL;
 	private JLayeredPane layeredPane;
+	private JPanel panelMenu;
+	private JPanel panelCrearEvento;
+	private JPanel panelAsignarLocalidad;
+	private JPanel panelAplicarOferta;
+	private JPanel panelSolicitarCancelacion;
+	private JPanel panelConsultarCancelaciones;
+	private JPanel panelVerIngresos;
+	private JPanel panelPorcentajeVentaTotal;
+	private JPanel panelPorcentajeVentaEvento;
+	private JPanel panelPorcentajeVentaLocalidad;
+	private JPanel panelSugerirVenue;
+	private JPanel panelModoCliente;
 	
-	
-	private JTextField txtNombre;
-	private JTextField textField_1;
-	private JComboBox<String> cbDia, cbMes, cbAno;
-	private JComboBox<String> cbHora, cbMinuto;
-	private String nombreE_1;
-	private LocalDate fechaE_1;
-	private LocalTime horaE_1;
-	private String tipoE_1;
-	private modelo.Venue venueSeleccionado;
-	private JComboBox<String> cbEventos; 
-	private modelo.Evento eventoSeleccionadoLocalidad;
-	private JTextField txtNombreL;
-	private JTextField txtPrecioBL;
-	private JTextField txtCantidadPaquetes;
-	private JTextField txtCapacidadL;
-	private JTextField txtNumPaquetes;
-	
+	// Modelos de tablas
+	private DefaultTableModel modeloTablaEventos;
+	private DefaultTableModel modeloTablaLocalidades;
+	private DefaultTableModel modeloTablaCancelaciones;
 
-
-	/**
-	 * Create the frame.
-	 */
 	public MenuOrganizador(modelo.Organizador organizador) {
 		this.organizador = organizador;
+		this.paneles = new ArrayList<>();
 		
 		configurarVentana();
 		inicializarLayeredPanel();
-		crearPanelMenu();
-		crearPanelOrganizarE();
-		crearPanelCreacionE_1();
-		crearPanelCreacionE_2();
-		crearPanelAsignarL();
 		
+		crearPanelMenu();
+		crearPanelCrearEvento();
+		crearPanelAsignarLocalidad();
+		crearPanelAplicarOferta();
+		crearPanelSolicitarCancelacion();
+		crearPanelConsultarCancelaciones();
+		crearPanelVerIngresos();
+		crearPanelPorcentajeVentaTotal();
+		crearPanelPorcentajeVentaEvento();
+		crearPanelPorcentajeVentaLocalidad();
+		crearPanelSugerirVenue();
 		
 		paneles.add(panelMenu);
-		paneles.add(panelOrganizarE);
-		paneles.add(panelCreacionE_1);
-		paneles.add(panelCreacionE_2);
-		paneles.add(panelAsignarL);
-		
-		
+		paneles.add(panelCrearEvento);
+		paneles.add(panelAsignarLocalidad);
+		paneles.add(panelAplicarOferta);
+		paneles.add(panelSolicitarCancelacion);
+		paneles.add(panelConsultarCancelaciones);
+		paneles.add(panelVerIngresos);
+		paneles.add(panelPorcentajeVentaTotal);
+		paneles.add(panelPorcentajeVentaEvento);
+		paneles.add(panelPorcentajeVentaLocalidad);
+		paneles.add(panelSugerirVenue);
 		
 		mostrarPanel(panelMenu);
-				
-		
-		
-
 	}
-	
-	
+
 	private void configurarVentana() {
+		setTitle("BoletaMaster - Organizador: " + organizador.getLogin());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 776, 589);
+		setBounds(100, 100, 900, 650);
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(10, 62, 114));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 	}
-	
+
 	private void inicializarLayeredPanel() {
 		layeredPane = new JLayeredPane();
-		layeredPane.setBounds(0, 0, 760, 550);
+		layeredPane.setBounds(0, 0, 884, 611);
 		contentPane.add(layeredPane);
-		layeredPane.setLayout(new CardLayout(0, 0));
 	}
-	
-	
-	private void crearPanelMenu() {
-		panelMenu = new JPanel();
-		panelMenu.setBackground(new Color(10, 62, 114));
-		panelMenu.setLayout(null);
-		layeredPane.add(panelMenu);
-		
-		JLabel tituloMenu = new JLabel("BOLETA MASTER");
-		tituloMenu.setBounds(222, 11, 310, 37);
-		tituloMenu.setFont(new Font("Elephant", Font.PLAIN, 30));
-		tituloMenu.setForeground(new Color(192, 192, 192));
-		panelMenu.add(tituloMenu);
-		
-		JLabel subtituloMenu = new JLabel("Menu Organizador");
-		subtituloMenu.setForeground(new Color(192, 192, 192));
-		subtituloMenu.setBounds(285, 57, 191, 26);
-		subtituloMenu.setFont(new Font("Elephant", Font.PLAIN, 20));
-		panelMenu.add(subtituloMenu);
-		
-		JButton btnOrganizar = new JButton("Organizar Eventos");
-		btnOrganizar.setFont(new Font("Elephant", Font.PLAIN, 15));
-		btnOrganizar.setBackground(new Color(255, 255, 255));
-		btnOrganizar.setBounds(10, 166, 740, 23);
-		panelMenu.add(btnOrganizar);
-		
-		btnOrganizar.addActionListener(e -> mostrarPanel(panelOrganizarE));
-		
-		JButton btnSolicitarCancelaci = new JButton("Solicitar Cancelación");
-		btnSolicitarCancelaci.setFont(new Font("Elephant", Font.PLAIN, 15));
-		btnSolicitarCancelaci.setBackground(Color.WHITE);
-		btnSolicitarCancelaci.setBounds(10, 200, 740, 23);
-		panelMenu.add(btnSolicitarCancelaci);
-		
-		JButton btnConsultarEstadoCancelaciones = new JButton("Consultar Estado Cancelaciones");
-		btnConsultarEstadoCancelaciones.setFont(new Font("Elephant", Font.PLAIN, 15));
-		btnConsultarEstadoCancelaciones.setBackground(Color.WHITE);
-		btnConsultarEstadoCancelaciones.setBounds(10, 234, 740, 23);
-		panelMenu.add(btnConsultarEstadoCancelaciones);
-		
-		JButton btnMenuDeIngresos = new JButton("Menu de Ingresos");
-		btnMenuDeIngresos.setFont(new Font("Elephant", Font.PLAIN, 15));
-		btnMenuDeIngresos.setBackground(Color.WHITE);
-		btnMenuDeIngresos.setBounds(10, 267, 740, 23);
-		panelMenu.add(btnMenuDeIngresos);
-		
-		JButton btnSugerirVenue = new JButton("Sugerir Venue");
-		btnSugerirVenue.setFont(new Font("Elephant", Font.PLAIN, 15));
-		btnSugerirVenue.setBackground(Color.WHITE);
-		btnSugerirVenue.setBounds(10, 301, 740, 23);
-		panelMenu.add(btnSugerirVenue);
-		
-		JButton btnAccederAlMenu = new JButton("Acceder al menu de Cliente");
-		btnAccederAlMenu.setFont(new Font("Elephant", Font.PLAIN, 15));
-		btnAccederAlMenu.setBackground(Color.WHITE);
-		btnAccederAlMenu.setBounds(10, 335, 740, 23);
-		panelMenu.add(btnAccederAlMenu);
-		
-		
-		JButton btnSalir = new JButton("Salir");
-		btnSalir.setFont(new Font("Elephant", Font.PLAIN, 11));
-		btnSalir.setBounds(326, 426, 89, 23);
-		panelMenu.add(btnSalir);
-		
-		btnSalir.addActionListener(e -> { this.dispose();
-        new Login().setVisible(true); });
-	
-		
-	}
-	
-	private void crearPanelOrganizarE(){
-		panelOrganizarE = new JPanel();
-		panelOrganizarE.setBackground(new Color(10, 62, 114));
-		layeredPane.add(panelOrganizarE, "name_86757222996400");
-		panelOrganizarE.setLayout(null);
-		
-		JLabel tituloMenu = new JLabel("BOLETA MASTER");
-		tituloMenu.setBounds(222, 11, 310, 37);
-		tituloMenu.setFont(new Font("Elephant", Font.PLAIN, 30));
-		tituloMenu.setForeground(new Color(192, 192, 192));
-		panelOrganizarE.add(tituloMenu);
-		
-		JLabel subtituloMenu = new JLabel("Organizar Evento");
-		subtituloMenu.setForeground(new Color(192, 192, 192));
-		subtituloMenu.setBounds(286, 57, 179, 26);
-		subtituloMenu.setFont(new Font("Elephant", Font.PLAIN, 20));
-		panelOrganizarE.add(subtituloMenu);
-		
-		JButton btnCrearE = new JButton("Crear Evento");
-		btnCrearE.setFont(new Font("Elephant", Font.PLAIN, 15));
-		btnCrearE.setBackground(Color.WHITE);
-		btnCrearE.setBounds(10, 177, 740, 23);
-		panelOrganizarE.add(btnCrearE);
-		
-		btnCrearE.addActionListener(e -> mostrarPanel(panelCreacionE_1));
-		
-		JButton btnAsignarL = new JButton("Asignar Localidad");
-		btnAsignarL.setFont(new Font("Elephant", Font.PLAIN, 15));
-		btnAsignarL.setBackground(Color.WHITE);
-		btnAsignarL.setBounds(10, 245, 740, 23);
-		panelOrganizarE.add(btnAsignarL);
-		
-		btnAsignarL.addActionListener(e -> mostrarPanel(panelAsignarL));
-		
-		JButton btnAplicarO = new JButton("Aplicar Oferta");
-		btnAplicarO.setFont(new Font("Elephant", Font.PLAIN, 15));
-		btnAplicarO.setBackground(Color.WHITE);
-		btnAplicarO.setBounds(10, 313, 740, 23);
-		panelOrganizarE.add(btnAplicarO);
-		
-		JButton btnVolver = new JButton("Volver");
-		btnVolver.setFont(new Font("Elephant", Font.PLAIN, 11));
-		btnVolver.setBounds(10, 11, 89, 23);
-		panelOrganizarE.add(btnVolver);
-		
-		btnVolver.addActionListener(e -> mostrarPanel(panelMenu));
-		
-		
-	}
-	
-	private void crearPanelCreacionE_1() {
-		
-		panelCreacionE_1 = new JPanel();
-		panelCreacionE_1.setBackground(new Color(10, 62, 114));
-		layeredPane.add(panelCreacionE_1, "name_87754789921100");
-		panelCreacionE_1.setLayout(null);
-		
-		JLabel tituloMenu = new JLabel("BOLETA MASTER");
-		tituloMenu.setForeground(Color.LIGHT_GRAY);
-		tituloMenu.setFont(new Font("Elephant", Font.PLAIN, 30));
-		tituloMenu.setBounds(222, 11, 310, 37);
-		panelCreacionE_1.add(tituloMenu);
-		
-		JLabel lblCrearEvento = new JLabel("Crear Evento");
-		lblCrearEvento.setForeground(Color.LIGHT_GRAY);
-		lblCrearEvento.setFont(new Font("Elephant", Font.PLAIN, 20));
-		lblCrearEvento.setBounds(308, 57, 134, 26);
-		panelCreacionE_1.add(lblCrearEvento);
-		
-		JLabel pedriNomE = new JLabel("Ingrese el nombre del evento");
-		pedriNomE.setForeground(new Color(192, 192, 192));
-		pedriNomE.setFont(new Font("Elephant", Font.PLAIN, 15));
-		pedriNomE.setBounds(10, 138, 225, 14);
-		panelCreacionE_1.add(pedriNomE);
-		
-		txtNombre = new JTextField();
-		txtNombre.setBounds(10, 163, 740, 20);
-		panelCreacionE_1.add(txtNombre);
-		txtNombre.setColumns(10);
-		
-		JLabel pedirFechaE = new JLabel("Ingrese la fecha del evento");
-		pedirFechaE.setForeground(Color.LIGHT_GRAY);
-		pedirFechaE.setFont(new Font("Elephant", Font.PLAIN, 15));
-		pedirFechaE.setBounds(10, 194, 225, 14);
-		panelCreacionE_1.add(pedirFechaE);
-		
-		cbDia = new JComboBox<>();
-		cbDia.setBounds(10, 219, 60, 22);
-		panelCreacionE_1.add(cbDia);
 
-		cbMes = new JComboBox<>();
-		cbMes.setBounds(80, 219, 60, 22);
-		panelCreacionE_1.add(cbMes);
-
-		cbAno = new JComboBox<>();
-		cbAno.setBounds(150, 219, 80, 22);
-		panelCreacionE_1.add(cbAno);
-		
-		
-		for(int i=1;i<=31;i++) cbDia.addItem(String.valueOf(i));
-		for(int i=1;i<=12;i++) cbMes.addItem(String.valueOf(i));
-		for(int i=2025;i<=2040;i++) cbAno.addItem(String.valueOf(i));
-		
-		JLabel pedirHoraE = new JLabel("Ingrese la hora del evento");
-		pedirHoraE.setForeground(Color.LIGHT_GRAY);
-		pedirHoraE.setFont(new Font("Elephant", Font.PLAIN, 15));
-		pedirHoraE.setBounds(10, 250, 225, 14);
-		panelCreacionE_1.add(pedirHoraE);
-		
-		
-		cbHora = new JComboBox<>();
-		cbHora.setBounds(10, 275, 60, 22);
-		panelCreacionE_1.add(cbHora);
-
-		cbMinuto = new JComboBox<>();
-		cbMinuto.setBounds(80, 275, 60, 22);
-		panelCreacionE_1.add(cbMinuto);
-
-		
-		for(int i=0;i<=23;i++) cbHora.addItem(String.format("%02d", i));
-		for(int i=0;i<=59;i++) cbMinuto.addItem(String.format("%02d", i));
-		
-		
-		JLabel pedirTipo = new JLabel("Ingrese el tipo de evento");
-		pedirTipo.setForeground(Color.LIGHT_GRAY);
-		pedirTipo.setFont(new Font("Elephant", Font.PLAIN, 15));
-		pedirTipo.setBounds(10, 306, 225, 14);
-		panelCreacionE_1.add(pedirTipo);
-		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(10, 331, 740, 20);
-		panelCreacionE_1.add(textField_1);
-		
-		JButton btnSiguiente = new JButton("Siguiente");
-		btnSiguiente.setFont(new Font("Elephant", Font.PLAIN, 11));
-		btnSiguiente.setBounds(329, 454, 89, 23);
-		panelCreacionE_1.add(btnSiguiente);
-		
-		btnSiguiente.addActionListener(e -> {
-
-
-		    String nombre = txtNombre.getText().trim();
-		    String tipo = textField_1.getText().trim();
-
-		    int dia = Integer.parseInt(cbDia.getSelectedItem().toString());
-		    int mes = Integer.parseInt(cbMes.getSelectedItem().toString());
-		    int ano = Integer.parseInt(cbAno.getSelectedItem().toString());
-
-		    int hora = Integer.parseInt(cbHora.getSelectedItem().toString());
-		    int minuto = Integer.parseInt(cbMinuto.getSelectedItem().toString());
-
-		    LocalDate fecha = LocalDate.of(ano, mes, dia);
-		    LocalTime horaEv = LocalTime.of(hora, minuto);
-
-		   
-		    nombreE_1 = nombre;
-		    fechaE_1 = fecha;
-		    horaE_1 = horaEv;
-		    tipoE_1 = tipo;
-
-		    mostrarPanel(panelCreacionE_2);
-		});
-		
-		JButton btnVolver = new JButton("Volver");
-		btnVolver.setFont(new Font("Elephant", Font.PLAIN, 11));
-		btnVolver.setBounds(10, 11, 89, 23);
-		panelCreacionE_1.add(btnVolver);
-		
-		btnVolver.addActionListener(e -> mostrarPanel(panelOrganizarE));
-		
-	}
-	
-	
-	private void crearPanelCreacionE_2() {
-		panelCreacionE_2 = new JPanel();
-		panelCreacionE_2.setBackground(new Color(10, 62, 114));
-		layeredPane.add(panelCreacionE_2, "name_89447288242900");
-		panelCreacionE_2.setLayout(null);
-		
-		JLabel tituloMenu = new JLabel("BOLETA MASTER");
-		tituloMenu.setForeground(Color.LIGHT_GRAY);
-		tituloMenu.setFont(new Font("Elephant", Font.PLAIN, 30));
-		tituloMenu.setBounds(222, 11, 310, 37);
-		panelCreacionE_2.add(tituloMenu);
-		
-		JLabel lblCrearEvento = new JLabel("Crear Evento");
-		lblCrearEvento.setForeground(Color.LIGHT_GRAY);
-		lblCrearEvento.setFont(new Font("Elephant", Font.PLAIN, 20));
-		lblCrearEvento.setBounds(308, 57, 134, 26);
-		panelCreacionE_2.add(lblCrearEvento);
-		
-		JLabel selectV = new JLabel("Seleccione un venue");
-		selectV.setForeground(new Color(192, 192, 192));
-		selectV.setFont(new Font("Elephant", Font.PLAIN, 15));
-		selectV.setBounds(10, 135, 152, 19);
-		panelCreacionE_2.add(selectV);
-		
-		JComboBox<String> cbVenue = new JComboBox<>();
-		cbVenue.setBounds(13, 165, 733, 22);
-		panelCreacionE_2.add(cbVenue);
-		
-		
-		panelCreacionE_2.addComponentListener(new java.awt.event.ComponentAdapter() {
-	     
-	        public void componentShown(java.awt.event.ComponentEvent evt) {
-	            cbVenue.removeAllItems();
-
-	            
-	            ArrayList<modelo.Venue> venues = new ArrayList<>(exec.Consola.adminGUI.getVenues());
-
-	            for (modelo.Venue v : venues) {
-
-	               
-	                if (v.getAprobado() && fechaE_1 != null && v.consultarDisponibilidad(fechaE_1)) {
-
-	                    String texto = v.getNombreV() +
-	                                   " | Capacidad: " + v.getCapacidad() +
-	                                   " | Tipo: " + v.getTipoV() +
-	                                   " | Ubicación: " + v.getUbicacion();
-
-	                    cbVenue.addItem(texto);
-	                }
-	            }
-
-	            if (cbVenue.getItemCount() == 0) {
-	                cbVenue.addItem("No hay venues disponibles para esta fecha");
-	            }
-	        }
-	    });
-		
-		JButton btnTerminar = new JButton("Terminar");
-		   btnTerminar.setFont(new Font("Elephant", Font.PLAIN, 11));
-		   btnTerminar.setBounds(326, 294, 87, 23);
-		   panelCreacionE_2.add(btnTerminar);
-
-		   btnTerminar.addActionListener(e -> {
-			   if (cbVenue.getSelectedItem() == null ||
-				       cbVenue.getSelectedItem().toString().startsWith("No hay")) {
-
-				        JOptionPane.showMessageDialog(this,
-				            "No puedes continuar porque no hay venues disponibles.",
-				            "Error",
-				            JOptionPane.ERROR_MESSAGE);
-				        return;
-				    }
-
-			
-				    String seleccionado = cbVenue.getSelectedItem().toString();
-				    venueSeleccionado = null;
-
-				    for (modelo.Venue v : exec.Consola.adminGUI.getVenues()) {
-				        if (seleccionado.contains(v.getNombreV())) {
-				            venueSeleccionado = v;
-				            break;
-				        }
-				    }
-
-				    if (venueSeleccionado == null) {
-				        JOptionPane.showMessageDialog(this,
-				            "No se pudo identificar el venue seleccionado.",
-				            "Error",
-				            JOptionPane.ERROR_MESSAGE);
-				        return;
-				    }
-
-				    int idE = new Random().nextInt(100000);
-				    modelo.Evento nuevoEvento = organizador.crearEvento(idE, nombreE_1, fechaE_1, horaE_1, seleccionado, venueSeleccionado);
-				        
-				  
-				    exec.Consola.eventosGUI.add(nuevoEvento);
-
-				  
-				    venueSeleccionado.addFechaOcupada(fechaE_1);
-
-				 
-				    JOptionPane.showMessageDialog(this,
-				        "El evento se ha creado exitosamente.\n\n" +
-				        "Nombre: " + nombreE_1 + "\n" +
-				        "Tipo: " + tipoE_1 + "\n" +
-				        "Fecha: " + fechaE_1 + " " + horaE_1 + "\n" +
-				        "Venue: " + venueSeleccionado.getNombreV() + "\n" +
-				        "Organizador: " + organizador.getLogin()
-				    );
-
-				    
-				    mostrarPanel(panelMenu);
-		    });
-
-	
-		    JButton btnVolver = new JButton("Volver");
-		    btnVolver.setFont(new Font("Elephant", Font.PLAIN, 11));
-		    btnVolver.setBounds(10, 11, 69, 23);
-		    panelCreacionE_2.add(btnVolver);
-
-		    btnVolver.addActionListener(e -> mostrarPanel(panelCreacionE_1));
-
-	}
-	
-	
-	
-	private void crearPanelAsignarL() {
-		panelAsignarL = new JPanel();
-		panelAsignarL.setBackground(new Color(10, 62, 114));
-		layeredPane.add(panelAsignarL, "name_91472770330100");
-		panelAsignarL.setLayout(null);
-		
-		JLabel tituloMenu = new JLabel("BOLETA MASTER");
-		tituloMenu.setForeground(Color.LIGHT_GRAY);
-		tituloMenu.setFont(new Font("Elephant", Font.PLAIN, 30));
-		tituloMenu.setBounds(222, 11, 310, 37);
-		panelAsignarL.add(tituloMenu);
-		
-		JLabel subtituloAsignar = new JLabel("Asignar Localidad");
-		subtituloAsignar.setForeground(Color.LIGHT_GRAY);
-		subtituloAsignar.setFont(new Font("Elephant", Font.PLAIN, 20));
-		subtituloAsignar.setBounds(281, 57, 183, 26);
-		panelAsignarL.add(subtituloAsignar);
-		
-		JLabel selectE = new JLabel("Seleccione un evento");
-		selectE.setForeground(new Color(192, 192, 192));
-		selectE.setFont(new Font("Elephant", Font.PLAIN, 15));
-		selectE.setBounds(10, 121, 157, 14);
-		panelAsignarL.add(selectE);
-		
-		cbEventos = new JComboBox();
-		cbEventos.setBounds(10, 146, 740, 22);
-		panelAsignarL.add(cbEventos);
-		
-		 panelAsignarL.addComponentListener(new java.awt.event.ComponentAdapter() {
-		        public void componentShown(java.awt.event.ComponentEvent evt) {
-		            cbEventos.removeAllItems();
-
-		            ArrayList<modelo.Evento> eventos = new ArrayList<>();
-
-		            for (modelo.Evento e : exec.Consola.eventosGUI) {
-		                if (e.getOrganizador().equals(organizador)) {
-		                    eventos.add(e);
-		                    cbEventos.addItem(
-		                        e.getNombreE() + " | Fecha: " + e.getFecha() + " | Venue: " + e.getVenue().getNombreV()
-		                    );
-		                }
-		            }
-
-		            if (cbEventos.getItemCount() == 0) {
-		                cbEventos.addItem("No tienes eventos creados");
-		            }
-		        }
-		    });
-		 
-		 cbEventos.addActionListener(e -> {
-		        if (cbEventos.getSelectedItem() == null) return;
-		        String seleccionado = cbEventos.getSelectedItem().toString();
-
-		        if (seleccionado.startsWith("No tienes")) {
-		            eventoSeleccionadoLocalidad = null;
-		            return;
-		        }
-
-		        for (modelo.Evento ev : exec.Consola.eventosGUI) {
-		            if (ev.getOrganizador().equals(organizador)) {
-
-		                String texto = ev.getNombreE() + " | Fecha: " + ev.getFecha() +
-		                               " | Venue: " + ev.getVenue().getNombreV();
-
-		                if (seleccionado.equals(texto)) {
-		                    eventoSeleccionadoLocalidad = ev;
-		                    break;
-		                }
-		            }
-		        }
-		    });
-		 
-		JLabel nombreL = new JLabel("Ingrese el nombre de la localidad");
-		nombreL.setForeground(Color.LIGHT_GRAY);
-		nombreL.setFont(new Font("Elephant", Font.PLAIN, 15));
-		nombreL.setBounds(10, 179, 247, 26);
-		panelAsignarL.add(nombreL);
-			
-		txtNombreL = new JTextField();
-		txtNombreL.setBounds(10, 204, 740, 20);
-		panelAsignarL.add(txtNombreL);
-		txtNombreL.setColumns(10);
-			
-		JLabel precioBL = new JLabel("Ingrese el precio base de los tiquetes");
-		precioBL.setForeground(Color.LIGHT_GRAY);
-		precioBL.setFont(new Font("Elephant", Font.PLAIN, 15));
-		precioBL.setBounds(10, 240, 271, 26);
-		panelAsignarL.add(precioBL);
-			
-		txtPrecioBL = new JTextField();
-		txtPrecioBL.setColumns(10);
-		txtPrecioBL.setBounds(10, 265, 740, 20);
-		panelAsignarL.add(txtPrecioBL);
-		
-		JLabel capacidadL = new JLabel("Ingrese la capacidad de la localidad");
-		capacidadL.setForeground(Color.LIGHT_GRAY);
-		capacidadL.setFont(new Font("Elephant", Font.PLAIN, 15));
-		capacidadL.setBounds(10, 296, 271, 26);
-		panelAsignarL.add(capacidadL);
-		
-		txtCapacidadL = new JTextField();
-		txtCapacidadL.setColumns(10);
-		txtCapacidadL.setBounds(10, 323, 740, 20);
-		panelAsignarL.add(txtCapacidadL);
-			
-		JLabel lbNumerada = new JLabel("¿Es numerada?");
-		lbNumerada.setForeground(Color.LIGHT_GRAY);
-		lbNumerada.setFont(new Font("Elephant", Font.PLAIN, 15));
-		lbNumerada.setBounds(10, 354, 119, 26);
-		panelAsignarL.add(lbNumerada);
-			
-		JLabel lbPaquetes = new JLabel("¿Crear paquetes?");
-		lbPaquetes.setForeground(Color.LIGHT_GRAY);
-		lbPaquetes.setFont(new Font("Elephant", Font.PLAIN, 15));
-		lbPaquetes.setBounds(165, 354, 133, 26);
-		panelAsignarL.add(lbPaquetes);
-			
-		JComboBox<String> cbNumerada = new JComboBox<>(new String[]{"No", "Sí"});
-		cbNumerada.setBounds(10, 383, 119, 22);
-		panelAsignarL.add(cbNumerada);
-			
-		JComboBox<String> cbPaquetes = new JComboBox<>(new String[]{"No", "Sí"});
-		cbPaquetes.setBounds(175, 383, 123, 22);
-		panelAsignarL.add(cbPaquetes);
-		
-		txtCantidadPaquetes = new JTextField();
-		txtCantidadPaquetes.setBounds(165, 449, 436, 20);
-		panelAsignarL.add(txtCantidadPaquetes);
-		txtCantidadPaquetes.setColumns(10);
-		
-		JLabel txtTiquetesPaquete = new JLabel("Ingrese el numero de tiquetes por paquete");
-		txtTiquetesPaquete.setForeground(Color.LIGHT_GRAY);
-		txtTiquetesPaquete.setFont(new Font("Elephant", Font.PLAIN, 15));
-		txtTiquetesPaquete.setBounds(165, 416, 314, 26);
-		panelAsignarL.add(txtTiquetesPaquete);
-		
-		JLabel txtTipoPaquete = new JLabel("Tipo de Paquete");
-		txtTipoPaquete.setForeground(Color.LIGHT_GRAY);
-		txtTipoPaquete.setFont(new Font("Elephant", Font.PLAIN, 15));
-		txtTipoPaquete.setBounds(10, 447, 133, 26);
-		panelAsignarL.add(txtTipoPaquete);
-		
-		JComboBox<String> cbTipoPaquete = new JComboBox<>(new String[]{"Normal", "Deluxe"});
-		cbTipoPaquete.setBounds(10, 484, 119, 22);
-		panelAsignarL.add(cbTipoPaquete);
-		
-		JLabel lblIngreseElNumero = new JLabel("Ingrese el numero de paquetes que  desea crear");
-		lblIngreseElNumero.setForeground(Color.LIGHT_GRAY);
-		lblIngreseElNumero.setFont(new Font("Elephant", Font.PLAIN, 15));
-		lblIngreseElNumero.setBounds(165, 480, 360, 26);
-		panelAsignarL.add(lblIngreseElNumero);
-		
-		txtNumPaquetes = new JTextField();
-		txtNumPaquetes.setColumns(10);
-		txtNumPaquetes.setBounds(165, 517, 436, 20);
-		panelAsignarL.add(txtNumPaquetes);
-		
-		
-		JButton btnAsignarL = new JButton("Asignar Localidad");
-		btnAsignarL.setFont(new Font("Elephant", Font.PLAIN, 11));
-		btnAsignarL.setBounds(565, 383, 142, 23);
-		panelAsignarL.add(btnAsignarL);
-		
-		btnAsignarL.addActionListener(e -> {
-
-	        if (eventoSeleccionadoLocalidad == null) {
-	            JOptionPane.showMessageDialog(this, "Error interno: no hay evento seleccionado.");
-	            return;
-	        }
-
-	        try {
-	            String nombre = txtNombreL.getText().trim();
-	            double precio = Double.parseDouble(txtPrecioBL.getText().trim());
-	            int capacidad = Integer.parseInt(txtCapacidadL.getText().trim());
-
-	            modelo.Venue venue = eventoSeleccionadoLocalidad.getVenue();
-
-	            int capacidadOcupada = eventoSeleccionadoLocalidad.capacidadOcupada();
-	            int totalVenue = venue.getCapacidad();
-
-	            if (capacidad <= 0 || capacidad + capacidadOcupada > totalVenue) {
-	                JOptionPane.showMessageDialog(this, "La capacidad excede el límite del venue.");
-	                return;
-	            }
-
-	            boolean numerada = cbNumerada.getSelectedItem().toString().equals("Sí");
-
-	            int idL = new Random().nextInt(10000);
-	            modelo.Localidad nueva = new modelo.Localidad(idL, nombre, precio, capacidad);
-	            nueva.setNumerada(numerada);
-
-	            for (int i = 0; i < capacidad; i++) {
-	                int idT = new Random().nextInt(10000);
-	                Tiquetes.TiqueteSimple t = new Tiquetes.TiqueteSimple(
-	                    idT, true, "ADMIN", Tiquetes.estadoTiquete.DISPONIBLE,
-	                    "SIMPLE", eventoSeleccionadoLocalidad, nueva
-	                );
-	                nueva.addTiquete(t);
-	            }
-
-	            if (cbPaquetes.getSelectedItem().toString().equals("Sí")) {
-
-	                int tipo = cbTipoPaquete.getSelectedItem().toString().equals("Deluxe") ? 2 : 1;
-	                int cantidad = Integer.parseInt(txtCantidadPaquetes.getText().trim());
-	                int numP = Integer.parseInt(txtNumPaquetes.getText().trim());	
-
-	                for (int j = 0; j < numP; j++) {
-	                    int idPack = new Random().nextInt(10000);
-
-	                    Tiquetes.TiqueteMultiple paquete;
-	                    if (tipo == 2) {
-	                        paquete = new Tiquetes.PaqueteDeluxe(idPack, "ADMIN");
-	                    } else {
-	                        paquete = new Tiquetes.TiqueteMultiple(idPack, true, "ADMIN",
-	                                Tiquetes.estadoTiquete.DISPONIBLE, "MULTIPLE");
-	                    }
-
-	                    double precioTotal = 0;
-	                    int agregados = 0;
-
-	                    for (Tiquetes.Tiquete t : nueva.getTiquetes()) {
-	                        if (t instanceof Tiquetes.TiqueteSimple &&
-	                            t.getStatus() == Tiquetes.estadoTiquete.DISPONIBLE &&
-	                            agregados < cantidad) {
-
-	                            paquete.addEntrada((Tiquetes.TiqueteSimple) t);
-	                            precioTotal += nueva.getPrecioBase();
-	                            agregados++;
-	                        }
-	                    }
-
-	                    paquete.setPrecioPaquete(precioTotal);
-	                    nueva.addTiquete(paquete);
-	                }
-	            }
-
-	            eventoSeleccionadoLocalidad.addLocalidad(nueva);
-
-	            JOptionPane.showMessageDialog(this,
-	                "Localidad '" + nombre + "' creada correctamente.");
-
-	            mostrarPanel(panelMenu);
-
-	        } catch (Exception ex) {
-	            JOptionPane.showMessageDialog(this, "Datos inválidos.");
-	        }
-	    });
-		
-		
-		
-	}
-	
-	
-	private void mostrarPanel(JPanel panelMostrado) {
-		for(JPanel p : paneles) {
+	private void mostrarPanel(JPanel panel) {
+		for (JPanel p : paneles) {
 			p.setVisible(false);
 		}
-		panelMostrado.setVisible(true);
-		panelMostrado.repaint();
+		panel.setVisible(true);
+		panel.setBounds(0, 0, 884, 611);
+	}
+
+	// ==================== PANEL MENÚ ====================
+	private void crearPanelMenu() {
+		panelMenu = new JPanel();
+		panelMenu.setLayout(null);
+		panelMenu.setBackground(new Color(10, 62, 114));
+		layeredPane.add(panelMenu, "panelMenu");
+
+		JLabel titulo = new JLabel("BOLETA MASTER");
+		titulo.setBounds(250, 11, 380, 37);
+		titulo.setFont(new Font("Elephant", Font.PLAIN, 30));
+		titulo.setForeground(Color.LIGHT_GRAY);
+		panelMenu.add(titulo);
+
+		JLabel lblBienvenida = new JLabel("Bienvenido Organizador: " + organizador.getLogin());
+		lblBienvenida.setForeground(Color.LIGHT_GRAY);
+		lblBienvenida.setBounds(250, 59, 400, 26);
+		lblBienvenida.setFont(new Font("Elephant", Font.PLAIN, 16));
+		panelMenu.add(lblBienvenida);
+
+		JLabel lblID = new JLabel("ID: " + organizador.getIdO());
+		lblID.setForeground(new Color(255, 200, 100));
+		lblID.setBounds(10, 90, 200, 20);
+		lblID.setFont(new Font("Elephant", Font.PLAIN, 12));
+		panelMenu.add(lblID);
+
+		// Botones del menú
+		int y = 130;
+		int espaciado = 35;
+
+		JButton btnCrearEvento = crearBotonMenu("Crear Evento", y);
+		btnCrearEvento.addActionListener(e -> mostrarPanel(panelCrearEvento));
+		panelMenu.add(btnCrearEvento);
+		y += espaciado;
+
+		JButton btnAsignarLocalidad = crearBotonMenu("Asignar Localidad a Evento", y);
+		btnAsignarLocalidad.addActionListener(e -> {
+			actualizarTablaEventos();
+			mostrarPanel(panelAsignarLocalidad);
+		});
+		panelMenu.add(btnAsignarLocalidad);
+		y += espaciado;
+
+		JButton btnAplicarOferta = crearBotonMenu("Aplicar Oferta", y);
+		btnAplicarOferta.addActionListener(e -> mostrarPanel(panelAplicarOferta));
+		panelMenu.add(btnAplicarOferta);
+		y += espaciado;
+
+		JButton btnSolicitarCancelacion = crearBotonMenu("Solicitar Cancelación de Evento", y);
+		btnSolicitarCancelacion.addActionListener(e -> mostrarPanel(panelSolicitarCancelacion));
+		panelMenu.add(btnSolicitarCancelacion);
+		y += espaciado;
+
+		JButton btnConsultarCancelaciones = crearBotonMenu("Consultar Estado de Cancelaciones", y);
+		btnConsultarCancelaciones.addActionListener(e -> {
+			actualizarTablaCancelaciones();
+			mostrarPanel(panelConsultarCancelaciones);
+		});
+		panelMenu.add(btnConsultarCancelaciones);
+		y += espaciado;
+
+		JButton btnVerIngresos = crearBotonMenu("Ver Ingresos Totales", y);
+		btnVerIngresos.addActionListener(e -> mostrarPanel(panelVerIngresos));
+		panelMenu.add(btnVerIngresos);
+		y += espaciado;
+
+		JButton btnPorcentajeTotal = crearBotonMenu("Porcentaje de Venta Total", y);
+		btnPorcentajeTotal.addActionListener(e -> mostrarPanel(panelPorcentajeVentaTotal));
+		panelMenu.add(btnPorcentajeTotal);
+		y += espaciado;
+
+		JButton btnPorcentajeEvento = crearBotonMenu("Porcentaje de Venta por Evento", y);
+		btnPorcentajeEvento.addActionListener(e -> mostrarPanel(panelPorcentajeVentaEvento));
+		panelMenu.add(btnPorcentajeEvento);
+		y += espaciado;
+
+		JButton btnPorcentajeLocalidad = crearBotonMenu("Porcentaje de Venta por Localidad", y);
+		btnPorcentajeLocalidad.addActionListener(e -> mostrarPanel(panelPorcentajeVentaLocalidad));
+		panelMenu.add(btnPorcentajeLocalidad);
+		y += espaciado;
+
+		JButton btnSugerirVenue = crearBotonMenu("Sugerir Venue", y);
+		btnSugerirVenue.addActionListener(e -> mostrarPanel(panelSugerirVenue));
+		panelMenu.add(btnSugerirVenue);
+		y += espaciado;
+
+		JButton btnModoCliente = crearBotonMenu("Acceder como Cliente", y);
+		btnModoCliente.addActionListener(e -> abrirModoCliente());
+		panelMenu.add(btnModoCliente);
+
+		JButton btnSalir = new JButton("Salir");
+		btnSalir.setFont(new Font("Elephant", Font.PLAIN, 11));
+		btnSalir.setBounds(397, 550, 89, 23);
+		btnSalir.addActionListener(e -> salir());
+		panelMenu.add(btnSalir);
+	}
+
+	private JButton crearBotonMenu(String texto, int y) {
+		JButton btn = new JButton(texto);
+		btn.setFont(new Font("Elephant", Font.PLAIN, 11));
+		btn.setBounds(10, y, 864, 30);
+		return btn;
+	}
+
+	// ==================== PANEL CREAR EVENTO ====================
+	private void crearPanelCrearEvento() {
+		panelCrearEvento = new JPanel();
+		panelCrearEvento.setLayout(null);
+		panelCrearEvento.setBackground(new Color(10, 62, 114));
+		layeredPane.add(panelCrearEvento, "panelCrearEvento");
+
+		agregarTituloYSubtitulo(panelCrearEvento, "Crear Evento");
+
+		JLabel lblNombre = new JLabel("Nombre del evento:");
+		lblNombre.setForeground(Color.LIGHT_GRAY);
+		lblNombre.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblNombre.setBounds(10, 120, 200, 25);
+		panelCrearEvento.add(lblNombre);
+
+		JTextField txtNombre = new JTextField();
+		txtNombre.setBounds(10, 150, 400, 25);
+		panelCrearEvento.add(txtNombre);
+
+		JLabel lblFecha = new JLabel("Fecha (dd/MM/yyyy):");
+		lblFecha.setForeground(Color.LIGHT_GRAY);
+		lblFecha.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblFecha.setBounds(450, 120, 200, 25);
+		panelCrearEvento.add(lblFecha);
+
+		JTextField txtFecha = new JTextField();
+		txtFecha.setBounds(450, 150, 200, 25);
+		panelCrearEvento.add(txtFecha);
+
+		JLabel lblHora = new JLabel("Hora (HH:mm):");
+		lblHora.setForeground(Color.LIGHT_GRAY);
+		lblHora.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblHora.setBounds(10, 190, 200, 25);
+		panelCrearEvento.add(lblHora);
+
+		JTextField txtHora = new JTextField();
+		txtHora.setBounds(10, 220, 200, 25);
+		panelCrearEvento.add(txtHora);
+
+		JLabel lblTipo = new JLabel("Tipo de evento:");
+		lblTipo.setForeground(Color.LIGHT_GRAY);
+		lblTipo.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblTipo.setBounds(250, 190, 200, 25);
+		panelCrearEvento.add(lblTipo);
+
+		JTextField txtTipo = new JTextField();
+		txtTipo.setBounds(250, 220, 300, 25);
+		panelCrearEvento.add(txtTipo);
+
+		JLabel lblVenue = new JLabel("Venues Aprobados:");
+		lblVenue.setForeground(Color.LIGHT_GRAY);
+		lblVenue.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblVenue.setBounds(10, 260, 200, 25);
+		panelCrearEvento.add(lblVenue);
+
+		JComboBox<String> comboVenues = new JComboBox<>();
+		comboVenues.setBounds(10, 290, 650, 25);
+		panelCrearEvento.add(comboVenues);
+
+		// Cargar venues aprobados
+		cargarVenuesAprobados(comboVenues);
+
+		JButton btnRefreshVenues = new JButton("⟳");
+		btnRefreshVenues.setBounds(670, 290, 50, 25);
+		btnRefreshVenues.addActionListener(e -> cargarVenuesAprobados(comboVenues));
+		panelCrearEvento.add(btnRefreshVenues);
+
+		JButton btnCrear = new JButton("Crear Evento");
+		btnCrear.setFont(new Font("Elephant", Font.PLAIN, 14));
+		btnCrear.setBounds(350, 400, 180, 35);
+		btnCrear.addActionListener(e -> {
+			try {
+				String nombre = txtNombre.getText().trim();
+				String fechaStr = txtFecha.getText().trim();
+				String horaStr = txtHora.getText().trim();
+				String tipo = txtTipo.getText().trim();
+				String venueStr = (String) comboVenues.getSelectedItem();
+
+				if (nombre.isEmpty() || fechaStr.isEmpty() || horaStr.isEmpty() || tipo.isEmpty() || venueStr == null) {
+					JOptionPane.showMessageDialog(this, "Complete todos los campos.");
+					return;
+				}
+
+				DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+				DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
+
+				LocalDate fecha = LocalDate.parse(fechaStr, formatoFecha);
+				LocalTime hora = LocalTime.parse(horaStr, formatoHora);
+
+				// Obtener el venue seleccionado
+				String nombreVenue = venueStr.split(" - ")[0];
+				modelo.Venue venue = buscarVenuePorNombre(nombreVenue);
+
+				if (venue == null || !venue.getAprobado()) {
+					JOptionPane.showMessageDialog(this, "El venue seleccionado no está disponible.");
+					return;
+				}
+
+				if (!venue.consultarDisponibilidad(fecha)) {
+					JOptionPane.showMessageDialog(this, "El venue no está disponible para esa fecha.");
+					return;
+				}
+
+				int idE = new Random().nextInt(100000);
+				Evento evento = organizador.crearEvento(idE, nombre, fecha, hora, tipo, venue);
+				
+				// Registrar en admin y en la lista global
+				exec.Consola.adminGUI.registrarEvento(evento);
+				exec.Consola.eventosGUI.add(evento);  // ← AGREGADO: Para que MenuCliente lo vea
+				venue.addFechaOcupada(fecha);
+
+				JOptionPane.showMessageDialog(this, "Evento creado exitosamente!\nID: " + idE);
+				
+				txtNombre.setText("");
+				txtFecha.setText("");
+				txtHora.setText("");
+				txtTipo.setText("");
+				
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+				ex.printStackTrace();
+			}
+		});
+		panelCrearEvento.add(btnCrear);
+
+		agregarBotonVolver(panelCrearEvento);
+	}
+
+	// ==================== PANEL ASIGNAR LOCALIDAD ====================
+	private void crearPanelAsignarLocalidad() {
+		panelAsignarLocalidad = new JPanel();
+		panelAsignarLocalidad.setLayout(null);
+		panelAsignarLocalidad.setBackground(new Color(10, 62, 114));
+		layeredPane.add(panelAsignarLocalidad, "panelAsignarLocalidad");
+
+		agregarTituloYSubtitulo(panelAsignarLocalidad, "Asignar Localidad");
+
+		JLabel lblEventos = new JLabel("Seleccione un evento:");
+		lblEventos.setForeground(Color.LIGHT_GRAY);
+		lblEventos.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblEventos.setBounds(10, 100, 250, 25);
+		panelAsignarLocalidad.add(lblEventos);
+
+		String[] columnasEventos = {"ID", "Nombre", "Fecha", "Venue", "Capacidad Usada/Total"};
+		modeloTablaEventos = new DefaultTableModel(columnasEventos, 0);
+		JTable tablaEventos = new JTable(modeloTablaEventos);
+		JScrollPane scrollEventos = new JScrollPane(tablaEventos);
+		scrollEventos.setBounds(10, 130, 864, 150);
+		panelAsignarLocalidad.add(scrollEventos);
+
+		JLabel lblDatos = new JLabel("Datos de la localidad:");
+		lblDatos.setForeground(Color.LIGHT_GRAY);
+		lblDatos.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblDatos.setBounds(10, 290, 250, 25);
+		panelAsignarLocalidad.add(lblDatos);
+
+		JLabel lblNombre = new JLabel("Nombre:");
+		lblNombre.setForeground(Color.LIGHT_GRAY);
+		lblNombre.setFont(new Font("Elephant", Font.PLAIN, 12));
+		lblNombre.setBounds(10, 320, 100, 20);
+		panelAsignarLocalidad.add(lblNombre);
+
+		JTextField txtNombre = new JTextField();
+		txtNombre.setBounds(100, 320, 200, 25);
+		panelAsignarLocalidad.add(txtNombre);
+
+		JLabel lblPrecio = new JLabel("Precio:");
+		lblPrecio.setForeground(Color.LIGHT_GRAY);
+		lblPrecio.setFont(new Font("Elephant", Font.PLAIN, 12));
+		lblPrecio.setBounds(320, 320, 80, 20);
+		panelAsignarLocalidad.add(lblPrecio);
+
+		JTextField txtPrecio = new JTextField();
+		txtPrecio.setBounds(400, 320, 150, 25);
+		panelAsignarLocalidad.add(txtPrecio);
+
+		JLabel lblCapacidad = new JLabel("Capacidad:");
+		lblCapacidad.setForeground(Color.LIGHT_GRAY);
+		lblCapacidad.setFont(new Font("Elephant", Font.PLAIN, 12));
+		lblCapacidad.setBounds(10, 350, 100, 20);
+		panelAsignarLocalidad.add(lblCapacidad);
+
+		JTextField txtCapacidad = new JTextField();
+		txtCapacidad.setBounds(100, 350, 200, 25);
+		panelAsignarLocalidad.add(txtCapacidad);
+
+		JCheckBox chkNumerada = new JCheckBox("¿Localidad numerada?");
+		chkNumerada.setForeground(Color.LIGHT_GRAY);
+		chkNumerada.setBackground(new Color(10, 62, 114));
+		chkNumerada.setFont(new Font("Elephant", Font.PLAIN, 12));
+		chkNumerada.setBounds(320, 350, 250, 25);
+		panelAsignarLocalidad.add(chkNumerada);
+
+		JButton btnAsignar = new JButton("Crear y Asignar Localidad");
+		btnAsignar.setFont(new Font("Elephant", Font.PLAIN, 13));
+		btnAsignar.setBounds(300, 450, 280, 35);
+		btnAsignar.addActionListener(e -> {
+			try {
+				int filaSeleccionada = tablaEventos.getSelectedRow();
+				if (filaSeleccionada == -1) {
+					JOptionPane.showMessageDialog(this, "Seleccione un evento de la tabla.");
+					return;
+				}
+
+				int idE = (int) modeloTablaEventos.getValueAt(filaSeleccionada, 0);
+				String nombre = txtNombre.getText().trim();
+				double precio = Double.parseDouble(txtPrecio.getText().trim());
+				int capacidad = Integer.parseInt(txtCapacidad.getText().trim());
+				boolean numerada = chkNumerada.isSelected();
+
+				Evento evento = buscarEventoPorId(idE);
+				if (evento == null) {
+					JOptionPane.showMessageDialog(this, "Evento no encontrado.");
+					return;
+				}
+
+				int capacidadRestante = evento.getVenue().getCapacidad() - evento.capacidadOcupada();
+				if (capacidad > capacidadRestante) {
+					JOptionPane.showMessageDialog(this, 
+						"Capacidad excede límite del venue.\n" +
+						"Disponible: " + capacidadRestante);
+					return;
+				}
+
+				// Crear localidad
+				int idL = new Random().nextInt(10000);
+				Localidad localidad = new Localidad(idL, nombre, precio, capacidad);
+				localidad.setNumerada(numerada);
+
+				// Crear tiquetes
+				for (int i = 0; i < capacidad; i++) {
+					int idT = new Random().nextInt(10000);
+					TiqueteSimple t = new TiqueteSimple(idT, true, "ADMIN", estadoTiquete.DISPONIBLE, "SIMPLE", evento, localidad);
+					localidad.addTiquete(t);
+				}
+
+				evento.addLocalidad(localidad);
+
+				JOptionPane.showMessageDialog(this, 
+					"Localidad creada y asignada exitosamente!\n" +
+					"ID Localidad: " + idL + "\n" +
+					"Capacidad: " + capacidad + " tiquetes creados");
+
+				txtNombre.setText("");
+				txtPrecio.setText("");
+				txtCapacidad.setText("");
+				chkNumerada.setSelected(false);
+				actualizarTablaEventos();
+
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+			}
+		});
+		panelAsignarLocalidad.add(btnAsignar);
+
+		agregarBotonVolver(panelAsignarLocalidad);
+	}
+
+	// ==================== PANEL APLICAR OFERTA ====================
+	private void crearPanelAplicarOferta() {
+		panelAplicarOferta = new JPanel();
+		panelAplicarOferta.setLayout(null);
+		panelAplicarOferta.setBackground(new Color(10, 62, 114));
+		layeredPane.add(panelAplicarOferta, "panelAplicarOferta");
+
+		agregarTituloYSubtitulo(panelAplicarOferta, "Aplicar Oferta");
+
+		JLabel lblEvento = new JLabel("Seleccione evento:");
+		lblEvento.setForeground(Color.LIGHT_GRAY);
+		lblEvento.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblEvento.setBounds(10, 100, 200, 25);
+		panelAplicarOferta.add(lblEvento);
+
+		JComboBox<String> comboEventos = new JComboBox<>();
+		comboEventos.setBounds(10, 130, 400, 25);
+		panelAplicarOferta.add(comboEventos);
+
+		JLabel lblLocalidad = new JLabel("Seleccione localidad:");
+		lblLocalidad.setForeground(Color.LIGHT_GRAY);
+		lblLocalidad.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblLocalidad.setBounds(10, 170, 200, 25);
+		panelAplicarOferta.add(lblLocalidad);
+
+		JComboBox<String> comboLocalidades = new JComboBox<>();
+		comboLocalidades.setBounds(10, 200, 400, 25);
+		panelAplicarOferta.add(comboLocalidades);
+
+		// Cargar eventos
+		cargarEventosOrganizador(comboEventos);
+		comboEventos.addActionListener(e -> cargarLocalidadesEvento(comboEventos, comboLocalidades));
+
+		JLabel lblPorcentaje = new JLabel("Porcentaje de descuento:");
+		lblPorcentaje.setForeground(Color.LIGHT_GRAY);
+		lblPorcentaje.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblPorcentaje.setBounds(10, 240, 250, 25);
+		panelAplicarOferta.add(lblPorcentaje);
+
+		JTextField txtPorcentaje = new JTextField();
+		txtPorcentaje.setBounds(10, 270, 150, 25);
+		panelAplicarOferta.add(txtPorcentaje);
+
+		JLabel lblFechaInicio = new JLabel("Fecha inicio (dd/MM/yyyy):");
+		lblFechaInicio.setForeground(Color.LIGHT_GRAY);
+		lblFechaInicio.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblFechaInicio.setBounds(10, 310, 250, 25);
+		panelAplicarOferta.add(lblFechaInicio);
+
+		JTextField txtFechaInicio = new JTextField();
+		txtFechaInicio.setBounds(10, 340, 200, 25);
+		panelAplicarOferta.add(txtFechaInicio);
+
+		JLabel lblFechaFin = new JLabel("Fecha fin (dd/MM/yyyy):");
+		lblFechaFin.setForeground(Color.LIGHT_GRAY);
+		lblFechaFin.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblFechaFin.setBounds(250, 310, 250, 25);
+		panelAplicarOferta.add(lblFechaFin);
+
+		JTextField txtFechaFin = new JTextField();
+		txtFechaFin.setBounds(250, 340, 200, 25);
+		panelAplicarOferta.add(txtFechaFin);
+
+		JButton btnAplicar = new JButton("Aplicar Oferta");
+		btnAplicar.setFont(new Font("Elephant", Font.PLAIN, 14));
+		btnAplicar.setBounds(350, 450, 180, 35);
+		btnAplicar.addActionListener(e -> {
+			try {
+				String localidadStr = (String) comboLocalidades.getSelectedItem();
+				if (localidadStr == null) {
+					JOptionPane.showMessageDialog(this, "Seleccione una localidad.");
+					return;
+				}
+
+				int idL = Integer.parseInt(localidadStr.split(" - ID:")[1].split(" ")[0]);
+				double porcentaje = Double.parseDouble(txtPorcentaje.getText().trim());
+				
+				DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+				LocalDate fechaInicio = LocalDate.parse(txtFechaInicio.getText().trim(), formato);
+				LocalDate fechaFin = LocalDate.parse(txtFechaFin.getText().trim(), formato);
+
+				organizador.aplicarOferta(idL, porcentaje, fechaInicio, fechaFin);
+
+				JOptionPane.showMessageDialog(this, 
+					"Oferta aplicada exitosamente!\n" +
+					"Descuento: " + porcentaje + "%\n" +
+					"Vigencia: " + fechaInicio + " a " + fechaFin);
+
+				txtPorcentaje.setText("");
+				txtFechaInicio.setText("");
+				txtFechaFin.setText("");
+
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+			}
+		});
+		panelAplicarOferta.add(btnAplicar);
+
+		agregarBotonVolver(panelAplicarOferta);
+	}
+
+	// ==================== PANEL SOLICITAR CANCELACIÓN ====================
+	private void crearPanelSolicitarCancelacion() {
+		panelSolicitarCancelacion = new JPanel();
+		panelSolicitarCancelacion.setLayout(null);
+		panelSolicitarCancelacion.setBackground(new Color(10, 62, 114));
+		layeredPane.add(panelSolicitarCancelacion, "panelSolicitarCancelacion");
+
+		agregarTituloYSubtitulo(panelSolicitarCancelacion, "Solicitar Cancelación");
+
+		JLabel lblEvento = new JLabel("Seleccione evento a cancelar:");
+		lblEvento.setForeground(Color.LIGHT_GRAY);
+		lblEvento.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblEvento.setBounds(10, 120, 300, 25);
+		panelSolicitarCancelacion.add(lblEvento);
+
+		JComboBox<String> comboEventos = new JComboBox<>();
+		comboEventos.setBounds(10, 150, 650, 25);
+		panelSolicitarCancelacion.add(comboEventos);
+		cargarEventosOrganizador(comboEventos);
+
+		JLabel lblMotivo = new JLabel("Motivo de la cancelación:");
+		lblMotivo.setForeground(Color.LIGHT_GRAY);
+		lblMotivo.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblMotivo.setBounds(10, 200, 300, 25);
+		panelSolicitarCancelacion.add(lblMotivo);
+
+		JTextArea txtMotivo = new JTextArea();
+		txtMotivo.setLineWrap(true);
+		txtMotivo.setWrapStyleWord(true);
+		JScrollPane scrollMotivo = new JScrollPane(txtMotivo);
+		scrollMotivo.setBounds(10, 230, 864, 120);
+		panelSolicitarCancelacion.add(scrollMotivo);
+
+		JLabel lblInfo = new JLabel("<html>Nota: La solicitud será revisada por el administrador.<br>" +
+									 "El reembolso será procesado automáticamente si se aprueba.</html>");
+		lblInfo.setForeground(new Color(255, 200, 100));
+		lblInfo.setFont(new Font("Elephant", Font.PLAIN, 11));
+		lblInfo.setBounds(10, 360, 600, 40);
+		panelSolicitarCancelacion.add(lblInfo);
+
+		JButton btnSolicitar = new JButton("Enviar Solicitud");
+		btnSolicitar.setFont(new Font("Elephant", Font.PLAIN, 14));
+		btnSolicitar.setBounds(350, 450, 200, 35);
+		btnSolicitar.addActionListener(e -> {
+			try {
+				String eventoStr = (String) comboEventos.getSelectedItem();
+				if (eventoStr == null) {
+					JOptionPane.showMessageDialog(this, "Seleccione un evento.");
+					return;
+				}
+
+				int idE = Integer.parseInt(eventoStr.split(" - ID:")[1].split(" ")[0]);
+				String motivo = txtMotivo.getText().trim();
+
+				if (motivo.isEmpty()) {
+					JOptionPane.showMessageDialog(this, "Debe ingresar un motivo.");
+					return;
+				}
+
+				organizador.solicitarCancelacion(idE, motivo);
+
+				JOptionPane.showMessageDialog(this, 
+					"Solicitud enviada al administrador.\n" +
+					"Será notificado cuando se revise.");
+
+				txtMotivo.setText("");
+				comboEventos.setSelectedIndex(0);
+
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+			}
+		});
+		panelSolicitarCancelacion.add(btnSolicitar);
+
+		agregarBotonVolver(panelSolicitarCancelacion);
+	}
+
+	// ==================== PANEL CONSULTAR CANCELACIONES ====================
+	private void crearPanelConsultarCancelaciones() {
+		panelConsultarCancelaciones = new JPanel();
+		panelConsultarCancelaciones.setLayout(null);
+		panelConsultarCancelaciones.setBackground(new Color(10, 62, 114));
+		layeredPane.add(panelConsultarCancelaciones, "panelConsultarCancelaciones");
+
+		agregarTituloYSubtitulo(panelConsultarCancelaciones, "Estado de Cancelaciones");
+
+		String[] columnas = {"ID", "Evento", "Fecha", "Estado", "Motivo"};
+		modeloTablaCancelaciones = new DefaultTableModel(columnas, 0);
+		JTable tabla = new JTable(modeloTablaCancelaciones);
+		JScrollPane scroll = new JScrollPane(tabla);
+		scroll.setBounds(10, 100, 864, 450);
+		panelConsultarCancelaciones.add(scroll);
+
+		agregarBotonVolver(panelConsultarCancelaciones);
+	}
+
+	// ==================== PANEL VER INGRESOS ====================
+	private void crearPanelVerIngresos() {
+		panelVerIngresos = new JPanel();
+		panelVerIngresos.setLayout(null);
+		panelVerIngresos.setBackground(new Color(10, 62, 114));
+		layeredPane.add(panelVerIngresos, "panelVerIngresos");
+
+		agregarTituloYSubtitulo(panelVerIngresos, "Ingresos Totales");
+
+		JLabel lblIngresos = new JLabel("Calculando...");
+		lblIngresos.setForeground(new Color(0, 255, 100));
+		lblIngresos.setFont(new Font("Elephant", Font.BOLD, 40));
+		lblIngresos.setBounds(100, 200, 700, 80);
+		lblIngresos.setHorizontalAlignment(SwingConstants.CENTER);
+		panelVerIngresos.add(lblIngresos);
+
+		JLabel lblInfo = new JLabel("Total de ingresos generados por todos tus eventos activos");
+		lblInfo.setForeground(Color.LIGHT_GRAY);
+		lblInfo.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblInfo.setBounds(100, 300, 700, 30);
+		lblInfo.setHorizontalAlignment(SwingConstants.CENTER);
+		panelVerIngresos.add(lblInfo);
+
+		JButton btnCalcular = new JButton("Actualizar");
+		btnCalcular.setFont(new Font("Elephant", Font.PLAIN, 14));
+		btnCalcular.setBounds(370, 370, 150, 35);
+		btnCalcular.addActionListener(e -> {
+			double ingresos = organizador.verIngresos();
+			lblIngresos.setText("$" + String.format("%.2f", ingresos));
+		});
+		panelVerIngresos.add(btnCalcular);
+
+		// Calcular al abrir
+		double ingresos = organizador.verIngresos();
+		lblIngresos.setText("$" + String.format("%.2f", ingresos));
+
+		agregarBotonVolver(panelVerIngresos);
+	}
+
+	// ==================== PANEL PORCENTAJE VENTA TOTAL ====================
+	private void crearPanelPorcentajeVentaTotal() {
+		panelPorcentajeVentaTotal = new JPanel();
+		panelPorcentajeVentaTotal.setLayout(null);
+		panelPorcentajeVentaTotal.setBackground(new Color(10, 62, 114));
+		layeredPane.add(panelPorcentajeVentaTotal, "panelPorcentajeVentaTotal");
+
+		agregarTituloYSubtitulo(panelPorcentajeVentaTotal, "% Venta Total");
+
+		JLabel lblPorcentaje = new JLabel("Calculando...");
+		lblPorcentaje.setForeground(new Color(255, 200, 0));
+		lblPorcentaje.setFont(new Font("Elephant", Font.BOLD, 50));
+		lblPorcentaje.setBounds(100, 200, 700, 80);
+		lblPorcentaje.setHorizontalAlignment(SwingConstants.CENTER);
+		panelPorcentajeVentaTotal.add(lblPorcentaje);
+
+		JLabel lblInfo = new JLabel("Porcentaje de ocupación de todos tus eventos");
+		lblInfo.setForeground(Color.LIGHT_GRAY);
+		lblInfo.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblInfo.setBounds(100, 300, 700, 30);
+		lblInfo.setHorizontalAlignment(SwingConstants.CENTER);
+		panelPorcentajeVentaTotal.add(lblInfo);
+
+		JButton btnCalcular = new JButton("Actualizar");
+		btnCalcular.setFont(new Font("Elephant", Font.PLAIN, 14));
+		btnCalcular.setBounds(370, 370, 150, 35);
+		btnCalcular.addActionListener(e -> {
+			double porcentaje = organizador.porcentajeVentaTotal();
+			lblPorcentaje.setText(String.format("%.2f", porcentaje) + "%");
+		});
+		panelPorcentajeVentaTotal.add(btnCalcular);
+
+		double porcentaje = organizador.porcentajeVentaTotal();
+		lblPorcentaje.setText(String.format("%.2f", porcentaje) + "%");
+
+		agregarBotonVolver(panelPorcentajeVentaTotal);
+	}
+
+	// ==================== PANEL PORCENTAJE VENTA POR EVENTO ====================
+	private void crearPanelPorcentajeVentaEvento() {
+		panelPorcentajeVentaEvento = new JPanel();
+		panelPorcentajeVentaEvento.setLayout(null);
+		panelPorcentajeVentaEvento.setBackground(new Color(10, 62, 114));
+		layeredPane.add(panelPorcentajeVentaEvento, "panelPorcentajeVentaEvento");
+
+		agregarTituloYSubtitulo(panelPorcentajeVentaEvento, "% Venta por Evento");
+
+		JLabel lblEvento = new JLabel("Seleccione evento:");
+		lblEvento.setForeground(Color.LIGHT_GRAY);
+		lblEvento.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblEvento.setBounds(10, 120, 200, 25);
+		panelPorcentajeVentaEvento.add(lblEvento);
+
+		JComboBox<String> comboEventos = new JComboBox<>();
+		comboEventos.setBounds(10, 150, 650, 25);
+		panelPorcentajeVentaEvento.add(comboEventos);
+		cargarEventosOrganizador(comboEventos);
+
+		JLabel lblResultado = new JLabel("--");
+		lblResultado.setForeground(new Color(255, 200, 0));
+		lblResultado.setFont(new Font("Elephant", Font.BOLD, 50));
+		lblResultado.setBounds(100, 250, 700, 80);
+		lblResultado.setHorizontalAlignment(SwingConstants.CENTER);
+		panelPorcentajeVentaEvento.add(lblResultado);
+
+		JButton btnCalcular = new JButton("Calcular");
+		btnCalcular.setFont(new Font("Elephant", Font.PLAIN, 14));
+		btnCalcular.setBounds(370, 400, 150, 35);
+		btnCalcular.addActionListener(e -> {
+			try {
+				String eventoStr = (String) comboEventos.getSelectedItem();
+				if (eventoStr == null) {
+					JOptionPane.showMessageDialog(this, "Seleccione un evento.");
+					return;
+				}
+
+				int idE = Integer.parseInt(eventoStr.split(" - ID:")[1].split(" ")[0]);
+				double porcentaje = organizador.porcentajeVentaPorEvento(idE);
+				lblResultado.setText(String.format("%.2f", porcentaje) + "%");
+
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+			}
+		});
+		panelPorcentajeVentaEvento.add(btnCalcular);
+
+		agregarBotonVolver(panelPorcentajeVentaEvento);
+	}
+
+	// ==================== PANEL PORCENTAJE VENTA POR LOCALIDAD ====================
+	private void crearPanelPorcentajeVentaLocalidad() {
+		panelPorcentajeVentaLocalidad = new JPanel();
+		panelPorcentajeVentaLocalidad.setLayout(null);
+		panelPorcentajeVentaLocalidad.setBackground(new Color(10, 62, 114));
+		layeredPane.add(panelPorcentajeVentaLocalidad, "panelPorcentajeVentaLocalidad");
+
+		agregarTituloYSubtitulo(panelPorcentajeVentaLocalidad, "% Venta por Localidad");
+
+		JLabel lblEvento = new JLabel("Seleccione evento:");
+		lblEvento.setForeground(Color.LIGHT_GRAY);
+		lblEvento.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblEvento.setBounds(10, 100, 200, 25);
+		panelPorcentajeVentaLocalidad.add(lblEvento);
+
+		JComboBox<String> comboEventos = new JComboBox<>();
+		comboEventos.setBounds(10, 130, 400, 25);
+		panelPorcentajeVentaLocalidad.add(comboEventos);
+
+		JLabel lblLocalidad = new JLabel("Seleccione localidad:");
+		lblLocalidad.setForeground(Color.LIGHT_GRAY);
+		lblLocalidad.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblLocalidad.setBounds(10, 170, 200, 25);
+		panelPorcentajeVentaLocalidad.add(lblLocalidad);
+
+		JComboBox<String> comboLocalidades = new JComboBox<>();
+		comboLocalidades.setBounds(10, 200, 400, 25);
+		panelPorcentajeVentaLocalidad.add(comboLocalidades);
+
+		cargarEventosOrganizador(comboEventos);
+		comboEventos.addActionListener(e -> cargarLocalidadesEvento(comboEventos, comboLocalidades));
+
+		JLabel lblResultado = new JLabel("--");
+		lblResultado.setForeground(new Color(255, 200, 0));
+		lblResultado.setFont(new Font("Elephant", Font.BOLD, 50));
+		lblResultado.setBounds(100, 280, 700, 80);
+		lblResultado.setHorizontalAlignment(SwingConstants.CENTER);
+		panelPorcentajeVentaLocalidad.add(lblResultado);
+
+		JButton btnCalcular = new JButton("Calcular");
+		btnCalcular.setFont(new Font("Elephant", Font.PLAIN, 14));
+		btnCalcular.setBounds(370, 420, 150, 35);
+		btnCalcular.addActionListener(e -> {
+			try {
+				String localidadStr = (String) comboLocalidades.getSelectedItem();
+				if (localidadStr == null) {
+					JOptionPane.showMessageDialog(this, "Seleccione una localidad.");
+					return;
+				}
+
+				int idL = Integer.parseInt(localidadStr.split(" - ID:")[1].split(" ")[0]);
+				double porcentaje = organizador.porcentajeVentaPorLocalidad(idL);
+				lblResultado.setText(String.format("%.2f", porcentaje) + "%");
+
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+			}
+		});
+		panelPorcentajeVentaLocalidad.add(btnCalcular);
+
+		agregarBotonVolver(panelPorcentajeVentaLocalidad);
+	}
+
+	// ==================== PANEL SUGERIR VENUE ====================
+	private void crearPanelSugerirVenue() {
+		panelSugerirVenue = new JPanel();
+		panelSugerirVenue.setLayout(null);
+		panelSugerirVenue.setBackground(new Color(10, 62, 114));
+		layeredPane.add(panelSugerirVenue, "panelSugerirVenue");
+
+		agregarTituloYSubtitulo(panelSugerirVenue, "Sugerir Venue");
+
+		JLabel lblNombre = new JLabel("Nombre del venue:");
+		lblNombre.setForeground(Color.LIGHT_GRAY);
+		lblNombre.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblNombre.setBounds(10, 120, 200, 25);
+		panelSugerirVenue.add(lblNombre);
+
+		JTextField txtNombre = new JTextField();
+		txtNombre.setBounds(10, 150, 400, 25);
+		panelSugerirVenue.add(txtNombre);
+
+		JLabel lblTipo = new JLabel("Tipo de venue:");
+		lblTipo.setForeground(Color.LIGHT_GRAY);
+		lblTipo.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblTipo.setBounds(450, 120, 200, 25);
+		panelSugerirVenue.add(lblTipo);
+
+		JTextField txtTipo = new JTextField();
+		txtTipo.setBounds(450, 150, 400, 25);
+		panelSugerirVenue.add(txtTipo);
+
+		JLabel lblUbicacion = new JLabel("Ubicación:");
+		lblUbicacion.setForeground(Color.LIGHT_GRAY);
+		lblUbicacion.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblUbicacion.setBounds(10, 190, 200, 25);
+		panelSugerirVenue.add(lblUbicacion);
+
+		JTextField txtUbicacion = new JTextField();
+		txtUbicacion.setBounds(10, 220, 840, 25);
+		panelSugerirVenue.add(txtUbicacion);
+
+		JLabel lblCapacidad = new JLabel("Capacidad:");
+		lblCapacidad.setForeground(Color.LIGHT_GRAY);
+		lblCapacidad.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblCapacidad.setBounds(10, 260, 200, 25);
+		panelSugerirVenue.add(lblCapacidad);
+
+		JTextField txtCapacidad = new JTextField();
+		txtCapacidad.setBounds(10, 290, 200, 25);
+		panelSugerirVenue.add(txtCapacidad);
+
+		JLabel lblRestricciones = new JLabel("Restricciones:");
+		lblRestricciones.setForeground(Color.LIGHT_GRAY);
+		lblRestricciones.setFont(new Font("Elephant", Font.PLAIN, 14));
+		lblRestricciones.setBounds(10, 330, 200, 25);
+		panelSugerirVenue.add(lblRestricciones);
+
+		JTextArea txtRestricciones = new JTextArea();
+		txtRestricciones.setLineWrap(true);
+		txtRestricciones.setWrapStyleWord(true);
+		JScrollPane scrollRestricciones = new JScrollPane(txtRestricciones);
+		scrollRestricciones.setBounds(10, 360, 864, 80);
+		panelSugerirVenue.add(scrollRestricciones);
+
+		JButton btnSugerir = new JButton("Enviar Sugerencia");
+		btnSugerir.setFont(new Font("Elephant", Font.PLAIN, 14));
+		btnSugerir.setBounds(340, 480, 200, 35);
+		btnSugerir.addActionListener(e -> {
+			try {
+				String nombre = txtNombre.getText().trim();
+				String tipo = txtTipo.getText().trim();
+				String ubicacion = txtUbicacion.getText().trim();
+				int capacidad = Integer.parseInt(txtCapacidad.getText().trim());
+				String restricciones = txtRestricciones.getText().trim();
+
+				if (nombre.isEmpty() || tipo.isEmpty() || ubicacion.isEmpty()) {
+					JOptionPane.showMessageDialog(this, "Complete todos los campos obligatorios.");
+					return;
+				}
+
+				Venue venue = new Venue(nombre, capacidad, tipo, ubicacion, restricciones);
+				venue.setAprobado(false);
+				exec.Consola.adminGUI.registrarVenue(venue);
+
+				JOptionPane.showMessageDialog(this, 
+					"Sugerencia enviada al administrador.\n" +
+					"El venue quedará pendiente de aprobación.");
+
+				txtNombre.setText("");
+				txtTipo.setText("");
+				txtUbicacion.setText("");
+				txtCapacidad.setText("");
+				txtRestricciones.setText("");
+
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+			}
+		});
+		panelSugerirVenue.add(btnSugerir);
+
+		agregarBotonVolver(panelSugerirVenue);
+	}
+
+	// ==================== MÉTODOS AUXILIARES ====================
+	private void agregarTituloYSubtitulo(JPanel panel, String subtitulo) {
+		JLabel titulo = new JLabel("BOLETA MASTER");
+		titulo.setBounds(250, 11, 380, 37);
+		titulo.setFont(new Font("Elephant", Font.PLAIN, 30));
+		titulo.setForeground(Color.LIGHT_GRAY);
+		panel.add(titulo);
+
+		JLabel sub = new JLabel(subtitulo);
+		sub.setForeground(Color.LIGHT_GRAY);
+		sub.setBounds(250, 59, 400, 26);
+		sub.setFont(new Font("Elephant", Font.PLAIN, 20));
+		panel.add(sub);
+	}
+
+	private void agregarBotonVolver(JPanel panel) {
+		JButton btnVolver = new JButton("Volver");
+		btnVolver.setBounds(10, 10, 100, 23);
+		btnVolver.addActionListener(e -> mostrarPanel(panelMenu));
+		panel.add(btnVolver);
+	}
+
+	private void cargarVenuesAprobados(JComboBox<String> combo) {
+		combo.removeAllItems();
+		for (Venue v : exec.Consola.adminGUI.getVenues()) {
+			if (v.getAprobado()) {
+				combo.addItem(v.getNombreV() + " - Cap: " + v.getCapacidad() + " - " + v.getTipoV());
+			}
+		}
+	}
+
+	private Venue buscarVenuePorNombre(String nombre) {
+		for (Venue v : exec.Consola.adminGUI.getVenues()) {
+			if (v.getNombreV().equals(nombre)) {
+				return v;
+			}
+		}
+		return null;
+	}
+
+	private void cargarEventosOrganizador(JComboBox<String> combo) {
+		combo.removeAllItems();
+		for (Evento e : organizador.getEventos()) {
+			combo.addItem(e.getNombreE() + " - ID:" + e.getIdE() + " (" + e.getFecha() + ")");
+		}
+	}
+
+	private void cargarLocalidadesEvento(JComboBox<String> comboEventos, JComboBox<String> comboLocalidades) {
+		comboLocalidades.removeAllItems();
+		try {
+			String eventoStr = (String) comboEventos.getSelectedItem();
+			if (eventoStr != null) {
+				int idE = Integer.parseInt(eventoStr.split(" - ID:")[1].split(" ")[0]);
+				Evento evento = buscarEventoPorId(idE);
+				if (evento != null) {
+					for (Localidad l : evento.getLocalidades()) {
+						comboLocalidades.addItem(l.getNombreL() + " - ID:" + l.getIdL() + " - $" + l.getPrecioBase());
+					}
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	private Evento buscarEventoPorId(int idE) {
+		for (Evento e : organizador.getEventos()) {
+			if (e.getIdE() == idE) {
+				return e;
+			}
+		}
+		return null;
+	}
+
+	private void actualizarTablaEventos() {
+		if (modeloTablaEventos == null) return;
+		
+		modeloTablaEventos.setRowCount(0);
+		for (Evento e : organizador.getEventos()) {
+			if (e.getEstado() != estadoEvento.CANCELADO) {
+				int capacidadUsada = e.capacidadOcupada();
+				int capacidadTotal = e.getVenue().getCapacidad();
+				modeloTablaEventos.addRow(new Object[]{
+					e.getIdE(),
+					e.getNombreE(),
+					e.getFecha(),
+					e.getVenue().getNombreV(),
+					capacidadUsada + "/" + capacidadTotal
+				});
+			}
+		}
+	}
+
+	private void actualizarTablaCancelaciones() {
+		if (modeloTablaCancelaciones == null) return;
+		
+		modeloTablaCancelaciones.setRowCount(0);
+		for (Evento e : organizador.getEventos()) {
+			String estado;
+			if (e.getCancelacionAprobada()) {
+				estado = "✓ Aprobada";
+			} else if (e.getCancelacionSolicitada()) {
+				estado = "⏳ En espera";
+			} else {
+				estado = "✓ Activo";
+			}
+
+			modeloTablaCancelaciones.addRow(new Object[]{
+				e.getIdE(),
+				e.getNombreE(),
+				e.getFecha(),
+				estado,
+				e.getMotivoCancelacion() != null ? e.getMotivoCancelacion() : "-"
+			});
+		}
+	}
+
+	private void abrirModoCliente() {
+		MenuCliente menuCliente = new MenuCliente(organizador);
+		menuCliente.setVisible(true);
+		this.dispose();
+	}
+
+	private void salir() {
+		try {
+			Persistencia.PerUsuario.guardarUsuarios(new ArrayList<>(exec.Consola.usuariosGUI));
+			JOptionPane.showMessageDialog(this, "Datos guardados correctamente.");
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "Error al guardar: " + e.getMessage());
+		}
+		
+		Login login = new Login();
+		login.setVisible(true);
+		this.dispose();
 	}
 }
