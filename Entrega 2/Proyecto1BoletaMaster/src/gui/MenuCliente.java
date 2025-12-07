@@ -22,11 +22,15 @@ public class MenuCliente extends JFrame {
 	private JPanel panelCompraTiquete;
 	private JPanel panelTiquetesComprados;
 	private JPanel panelSolicitarDevolucion;
+	private JPanel panelConsultarDevoluciones;
 	private JPanel panelImprimirTiquete;
 	private JLabel lblSaldo;
 	
 	// Modelo de tabla como variable de instancia
 	private DefaultTableModel modeloTablaTiquetes;
+	private JTable tablaDevoluciones;
+	private DefaultTableModel modeloDevoluciones;
+
 
 	public MenuCliente(modelo.Cliente cliente) {
 		this.cliente = cliente;
@@ -38,6 +42,7 @@ public class MenuCliente extends JFrame {
 		crearPanelComprarTiquete();
 		crearPanelTiquetesComprados();
 		crearPanelSolicitarDevolucion();
+		crearPanelConsultarDevoluciones();
 		crearPanelImprimirTiquete();
 		
 		paneles.add(panelMenu);
@@ -45,9 +50,11 @@ public class MenuCliente extends JFrame {
 		paneles.add(panelCompraTiquete);
 		paneles.add(panelTiquetesComprados);
 		paneles.add(panelSolicitarDevolucion);
+		paneles.add(panelConsultarDevoluciones);		
 		paneles.add(panelImprimirTiquete);
 		
 		mostrarPanel(panelMenu);
+		
 	}
 	
 	private void configurarVentana() {
@@ -74,7 +81,7 @@ public class MenuCliente extends JFrame {
 		layeredPane.add(panelMenu, "name_71840167171800");
 
 		JLabel titulo = new JLabel("BOLETA MASTER");
-		titulo.setBounds(250, 11, 380, 37);
+		titulo.setBounds(273, 6, 310, 37);
 		titulo.setFont(new Font("Elephant", Font.PLAIN, 30));
 		titulo.setForeground(Color.LIGHT_GRAY);
 		panelMenu.add(titulo);
@@ -125,11 +132,18 @@ public class MenuCliente extends JFrame {
 		btnSolicitarDev.setBounds(10, 289, 864, 30);
 		btnSolicitarDev.addActionListener(e -> mostrarPanel(panelSolicitarDevolucion));
 		panelMenu.add(btnSolicitarDev);
+		
+		JButton btnConsultarSolDev = new JButton("Consultar Solicitudes de Devolución");
+		btnConsultarSolDev.setFont(new Font("Elephant", Font.PLAIN, 11));
+		btnConsultarSolDev.setBounds(10, 335, 864, 30);
+		panelMenu.add(btnConsultarSolDev);
+		
+		btnConsultarSolDev.addActionListener(e -> mostrarPanel(panelConsultarDevoluciones));
 
 		// NUEVO: Botón para imprimir tiquete
 		JButton btnImprimir = new JButton("Imprimir Tiquete");
 		btnImprimir.setFont(new Font("Elephant", Font.PLAIN, 11));
-		btnImprimir.setBounds(10, 330, 864, 30);
+		btnImprimir.setBounds(10, 381, 864, 30);
 		btnImprimir.addActionListener(e -> mostrarPanel(panelImprimirTiquete));
 		panelMenu.add(btnImprimir);
 
@@ -513,6 +527,45 @@ public class MenuCliente extends JFrame {
 		btnVolver.addActionListener(e -> mostrarPanel(panelMenu));
 		panelSolicitarDevolucion.add(btnVolver);
 	}
+	
+	
+	
+	
+	private void crearPanelConsultarDevoluciones() {
+		panelConsultarDevoluciones = new JPanel();
+		panelConsultarDevoluciones.setLayout(null);
+		panelConsultarDevoluciones.setBackground(new Color(10, 62, 114));
+		layeredPane.add(panelConsultarDevoluciones, "panelConsultarDevoluciones");
+		
+		JLabel titulo = new JLabel("BOLETA MASTER");
+		titulo.setBounds(250, 11, 310, 37);
+		titulo.setFont(new Font("Elephant", Font.PLAIN, 30));
+		titulo.setForeground(Color.LIGHT_GRAY);
+		panelConsultarDevoluciones.add(titulo);
+		
+		JLabel sub = new JLabel("Consultar Estado Devoluciones");
+		sub.setForeground(Color.LIGHT_GRAY);
+		sub.setBounds(250, 49, 314, 26);
+		sub.setFont(new Font("Elephant", Font.PLAIN, 20));
+		panelConsultarDevoluciones.add(sub);
+		
+		String[] columnas = {"ID Tiquete", "Evento", "Localidad", "Estado", "Motivo"};
+	    modeloDevoluciones = new DefaultTableModel(columnas, 0);
+	    tablaDevoluciones = new JTable(modeloDevoluciones);
+	    tablaDevoluciones.setRowHeight(25);
+
+	    JScrollPane scroll = new JScrollPane(tablaDevoluciones);
+	    scroll.setBounds(10, 100, 859, 495);
+	    panelConsultarDevoluciones.add(scroll);
+
+	    JButton btnVolver = new JButton("Volver");
+	    btnVolver.setFont(new Font("Elephant", Font.PLAIN, 11));
+	    btnVolver.setBounds(10, 10, 100, 23);
+	    btnVolver.addActionListener(e -> mostrarPanel(panelMenu));
+	    panelConsultarDevoluciones.add(btnVolver);
+		
+		
+	}
 
 	// NUEVO: Panel para imprimir tiquete
 	private void crearPanelImprimirTiquete() {
@@ -738,7 +791,7 @@ public class MenuCliente extends JFrame {
 		lblFooter.setBounds(20, 500, 700, 20);
 		panelTiquete.add(lblFooter);
 		
-		ventanaImpresion.add(panelTiquete);
+		ventanaImpresion.getContentPane().add(panelTiquete);
 		ventanaImpresion.setVisible(true);
 	}
 

@@ -38,6 +38,9 @@ public class MenuOrganizador extends JFrame {
 	private DefaultTableModel modeloTablaEventos;
 	private DefaultTableModel modeloTablaLocalidades;
 	private DefaultTableModel modeloTablaCancelaciones;
+	
+	private JComboBox<String> comboEventosAplicarOferta;
+	private JComboBox<String> comboLocalidadesAplicarOferta;
 
 	public MenuOrganizador(modelo.Organizador organizador) {
 		this.organizador = organizador;
@@ -99,10 +102,11 @@ public class MenuOrganizador extends JFrame {
 
 	// ==================== PANEL MENÚ ====================
 	private void crearPanelMenu() {
+		layeredPane.setLayout(new CardLayout(0, 0));
 		panelMenu = new JPanel();
 		panelMenu.setLayout(null);
 		panelMenu.setBackground(new Color(10, 62, 114));
-		layeredPane.add(panelMenu, "panelMenu");
+		layeredPane.add(panelMenu, "name_242939829196200");
 
 		JLabel titulo = new JLabel("BOLETA MASTER");
 		titulo.setBounds(250, 11, 380, 37);
@@ -205,7 +209,7 @@ public class MenuOrganizador extends JFrame {
 		panelCrearEvento = new JPanel();
 		panelCrearEvento.setLayout(null);
 		panelCrearEvento.setBackground(new Color(10, 62, 114));
-		layeredPane.add(panelCrearEvento, "panelCrearEvento");
+		layeredPane.add(panelCrearEvento, "name_242939846201200");
 
 		agregarTituloYSubtitulo(panelCrearEvento, "Crear Evento");
 
@@ -328,12 +332,12 @@ public class MenuOrganizador extends JFrame {
 		agregarBotonVolver(panelCrearEvento);
 	}
 
-	// ==================== PANEL ASIGNAR LOCALIDAD ====================
+	
 	private void crearPanelAsignarLocalidad() {
 		panelAsignarLocalidad = new JPanel();
 		panelAsignarLocalidad.setLayout(null);
 		panelAsignarLocalidad.setBackground(new Color(10, 62, 114));
-		layeredPane.add(panelAsignarLocalidad, "panelAsignarLocalidad");
+		layeredPane.add(panelAsignarLocalidad, "name_242939864081800");
 
 		agregarTituloYSubtitulo(panelAsignarLocalidad, "Asignar Localidad");
 
@@ -392,10 +396,70 @@ public class MenuOrganizador extends JFrame {
 		chkNumerada.setFont(new Font("Elephant", Font.PLAIN, 12));
 		chkNumerada.setBounds(320, 350, 250, 25);
 		panelAsignarLocalidad.add(chkNumerada);
+		
+		
+	
+
+	    JLabel lblTipoCreacion = new JLabel("Tipo de creación:");
+	    lblTipoCreacion.setForeground(Color.LIGHT_GRAY);
+	    lblTipoCreacion.setFont(new Font("Elephant", Font.PLAIN, 12));
+	    lblTipoCreacion.setBounds(10, 409, 110, 20);
+	    panelAsignarLocalidad.add(lblTipoCreacion);
+
+	    JComboBox<String> cbTipoCreacion = new JComboBox<>();
+	    cbTipoCreacion.addItem("Tiquetes Simples");
+	    cbTipoCreacion.addItem("Paquetes (TiqueteMultiple)");
+	    cbTipoCreacion.setBounds(149, 405, 200, 25);
+	    panelAsignarLocalidad.add(cbTipoCreacion);
+
+
+	 
+
+	    JLabel lblEntradasPack = new JLabel("Entradas por paquete:");
+	    lblEntradasPack.setForeground(Color.LIGHT_GRAY);
+	    lblEntradasPack.setFont(new Font("Elephant", Font.PLAIN, 12));
+	    lblEntradasPack.setBounds(15, 478, 143, 20);
+	    lblEntradasPack.setVisible(false);
+	    panelAsignarLocalidad.add(lblEntradasPack);
+
+	    JTextField txtEntradasPack = new JTextField();
+	    txtEntradasPack.setBounds(173, 473, 200, 25);
+	    txtEntradasPack.setVisible(false);
+	    panelAsignarLocalidad.add(txtEntradasPack);
+
+	    JLabel lblCantidadPack = new JLabel("Número de paquetes:");
+	    lblCantidadPack.setForeground(Color.LIGHT_GRAY);
+	    lblCantidadPack.setFont(new Font("Elephant", Font.PLAIN, 12));
+	    lblCantidadPack.setBounds(400, 478, 200, 20);
+	    lblCantidadPack.setVisible(false);
+	    panelAsignarLocalidad.add(lblCantidadPack);
+
+	    JTextField txtCantidadPack = new JTextField();
+	    txtCantidadPack.setBounds(566, 474, 200, 25);
+	    txtCantidadPack.setVisible(false);
+	    panelAsignarLocalidad.add(txtCantidadPack);
+
+
+	  
+
+	    cbTipoCreacion.addActionListener(e -> {
+	        boolean esPaquete = cbTipoCreacion.getSelectedIndex() == 1;
+
+	        lblEntradasPack.setVisible(esPaquete);
+	        txtEntradasPack.setVisible(esPaquete);
+
+	        lblCantidadPack.setVisible(esPaquete);
+	        txtCantidadPack.setVisible(esPaquete);
+
+	        chkNumerada.setEnabled(!esPaquete);
+	        if (esPaquete) chkNumerada.setSelected(false);
+	    });
+		
+		
 
 		JButton btnAsignar = new JButton("Crear y Asignar Localidad");
 		btnAsignar.setFont(new Font("Elephant", Font.PLAIN, 13));
-		btnAsignar.setBounds(300, 450, 280, 35);
+		btnAsignar.setBounds(305, 540, 280, 35);
 		btnAsignar.addActionListener(e -> {
 			try {
 				int filaSeleccionada = tablaEventos.getSelectedRow();
@@ -409,12 +473,17 @@ public class MenuOrganizador extends JFrame {
 				double precio = Double.parseDouble(txtPrecio.getText().trim());
 				int capacidad = Integer.parseInt(txtCapacidad.getText().trim());
 				boolean numerada = chkNumerada.isSelected();
+				
+				
+				
+				
 
 				Evento evento = buscarEventoPorId(idE);
 				if (evento == null) {
 					JOptionPane.showMessageDialog(this, "Evento no encontrado.");
 					return;
 				}
+				
 
 				int capacidadRestante = evento.getVenue().getCapacidad() - evento.capacidadOcupada();
 				if (capacidad > capacidadRestante) {
@@ -428,15 +497,68 @@ public class MenuOrganizador extends JFrame {
 				int idL = new Random().nextInt(10000);
 				Localidad localidad = new Localidad(idL, nombre, precio, capacidad);
 				localidad.setNumerada(numerada);
+				
+				 boolean esPaquete = cbTipoCreacion.getSelectedIndex() == 1;
 
 				// Crear tiquetes
-				for (int i = 0; i < capacidad; i++) {
-					int idT = new Random().nextInt(10000);
-					TiqueteSimple t = new TiqueteSimple(idT, true, "ADMIN", estadoTiquete.DISPONIBLE, "SIMPLE", evento, localidad);
-					localidad.addTiquete(t);
+				if (!esPaquete) {
+
+		              for (int i = 0; i < capacidad; i++) {
+		                  int idT = new Random().nextInt(99999);
+		                  TiqueteSimple t = new TiqueteSimple(idT, true, "ADMIN", estadoTiquete.DISPONIBLE,
+		                          "SIMPLE", evento, localidad);
+		                  localidad.addTiquete(t);
+		             }
+
+		          } else {
+
+
+		        	    int entradas = Integer.parseInt(txtEntradasPack.getText().trim());
+		        	    int cantPaquetes = Integer.parseInt(txtCantidadPack.getText().trim());
+
+		        	    
+		        	    double precioBase = precio;
+
+		        	    for (int i = 0; i < cantPaquetes; i++) {
+
+		        	        int idPack = new Random().nextInt(99999);
+		        	        TiqueteMultiple pack = new TiqueteMultiple(
+		        	                idPack, true, "ADMIN",
+		        	                Tiquetes.estadoTiquete.DISPONIBLE, "MULTIPLE"
+		        	        );
+
+		        	        double precioTotal = 0;
+		        	        int agregados = 0;
+
+		        	        
+		        	        while (agregados < entradas) {
+
+		        	            int idT = new Random().nextInt(99999);
+
+		        	            TiqueteSimple ts = new TiqueteSimple(
+		        	                    idT,
+		        	                    true,
+		        	                    "ADMIN",
+		        	                    Tiquetes.estadoTiquete.DISPONIBLE,
+		        	                    "SIMPLE",
+		        	                    evento,
+		        	                    localidad
+		        	            );
+
+		        	            pack.addEntrada(ts);
+		        	            precioTotal += precioBase;
+		        	            agregados++;
+		        	        }
+
+		        	    
+		        	        pack.setPrecioPaquete(precioTotal);
+
+		        	        localidad.addTiquete(pack);
+		                }
 				}
 
 				evento.addLocalidad(localidad);
+				refrescarPanelAplicarOferta();
 
 				JOptionPane.showMessageDialog(this, 
 					"Localidad creada y asignada exitosamente!\n" +
@@ -453,6 +575,8 @@ public class MenuOrganizador extends JFrame {
 				JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
 			}
 		});
+		
+		
 		panelAsignarLocalidad.add(btnAsignar);
 
 		agregarBotonVolver(panelAsignarLocalidad);
@@ -463,7 +587,7 @@ public class MenuOrganizador extends JFrame {
 		panelAplicarOferta = new JPanel();
 		panelAplicarOferta.setLayout(null);
 		panelAplicarOferta.setBackground(new Color(10, 62, 114));
-		layeredPane.add(panelAplicarOferta, "panelAplicarOferta");
+		layeredPane.add(panelAplicarOferta, "name_242939883791100");
 
 		agregarTituloYSubtitulo(panelAplicarOferta, "Aplicar Oferta");
 
@@ -473,9 +597,9 @@ public class MenuOrganizador extends JFrame {
 		lblEvento.setBounds(10, 100, 200, 25);
 		panelAplicarOferta.add(lblEvento);
 
-		JComboBox<String> comboEventos = new JComboBox<>();
-		comboEventos.setBounds(10, 130, 400, 25);
-		panelAplicarOferta.add(comboEventos);
+		comboEventosAplicarOferta = new JComboBox<>();
+		comboEventosAplicarOferta.setBounds(10, 130, 400, 25);
+		panelAplicarOferta.add(comboEventosAplicarOferta);
 
 		JLabel lblLocalidad = new JLabel("Seleccione localidad:");
 		lblLocalidad.setForeground(Color.LIGHT_GRAY);
@@ -483,13 +607,13 @@ public class MenuOrganizador extends JFrame {
 		lblLocalidad.setBounds(10, 170, 200, 25);
 		panelAplicarOferta.add(lblLocalidad);
 
-		JComboBox<String> comboLocalidades = new JComboBox<>();
-		comboLocalidades.setBounds(10, 200, 400, 25);
-		panelAplicarOferta.add(comboLocalidades);
+		comboLocalidadesAplicarOferta = new JComboBox<>();
+		comboLocalidadesAplicarOferta.setBounds(10, 200, 400, 25);
+		panelAplicarOferta.add(comboLocalidadesAplicarOferta);
 
 		// Cargar eventos
-		cargarEventosOrganizador(comboEventos);
-		comboEventos.addActionListener(e -> cargarLocalidadesEvento(comboEventos, comboLocalidades));
+		cargarEventosOrganizador(comboEventosAplicarOferta);
+		comboEventosAplicarOferta.addActionListener(e -> cargarLocalidadesEvento(comboEventosAplicarOferta, comboLocalidadesAplicarOferta));
 
 		JLabel lblPorcentaje = new JLabel("Porcentaje de descuento:");
 		lblPorcentaje.setForeground(Color.LIGHT_GRAY);
@@ -526,7 +650,7 @@ public class MenuOrganizador extends JFrame {
 		btnAplicar.setBounds(350, 450, 180, 35);
 		btnAplicar.addActionListener(e -> {
 			try {
-				String localidadStr = (String) comboLocalidades.getSelectedItem();
+				String localidadStr = (String) comboLocalidadesAplicarOferta.getSelectedItem();
 				if (localidadStr == null) {
 					JOptionPane.showMessageDialog(this, "Seleccione una localidad.");
 					return;
@@ -564,7 +688,7 @@ public class MenuOrganizador extends JFrame {
 		panelSolicitarCancelacion = new JPanel();
 		panelSolicitarCancelacion.setLayout(null);
 		panelSolicitarCancelacion.setBackground(new Color(10, 62, 114));
-		layeredPane.add(panelSolicitarCancelacion, "panelSolicitarCancelacion");
+		layeredPane.add(panelSolicitarCancelacion, "name_242939900541000");
 
 		agregarTituloYSubtitulo(panelSolicitarCancelacion, "Solicitar Cancelación");
 
@@ -641,7 +765,7 @@ public class MenuOrganizador extends JFrame {
 		panelConsultarCancelaciones = new JPanel();
 		panelConsultarCancelaciones.setLayout(null);
 		panelConsultarCancelaciones.setBackground(new Color(10, 62, 114));
-		layeredPane.add(panelConsultarCancelaciones, "panelConsultarCancelaciones");
+		layeredPane.add(panelConsultarCancelaciones, "name_242939917728200");
 
 		agregarTituloYSubtitulo(panelConsultarCancelaciones, "Estado de Cancelaciones");
 
@@ -660,7 +784,7 @@ public class MenuOrganizador extends JFrame {
 		panelVerIngresos = new JPanel();
 		panelVerIngresos.setLayout(null);
 		panelVerIngresos.setBackground(new Color(10, 62, 114));
-		layeredPane.add(panelVerIngresos, "panelVerIngresos");
+		layeredPane.add(panelVerIngresos, "name_242939939284900");
 
 		agregarTituloYSubtitulo(panelVerIngresos, "Ingresos Totales");
 
@@ -699,7 +823,7 @@ public class MenuOrganizador extends JFrame {
 		panelPorcentajeVentaTotal = new JPanel();
 		panelPorcentajeVentaTotal.setLayout(null);
 		panelPorcentajeVentaTotal.setBackground(new Color(10, 62, 114));
-		layeredPane.add(panelPorcentajeVentaTotal, "panelPorcentajeVentaTotal");
+		layeredPane.add(panelPorcentajeVentaTotal, "name_242939958711800");
 
 		agregarTituloYSubtitulo(panelPorcentajeVentaTotal, "% Venta Total");
 
@@ -737,7 +861,7 @@ public class MenuOrganizador extends JFrame {
 		panelPorcentajeVentaEvento = new JPanel();
 		panelPorcentajeVentaEvento.setLayout(null);
 		panelPorcentajeVentaEvento.setBackground(new Color(10, 62, 114));
-		layeredPane.add(panelPorcentajeVentaEvento, "panelPorcentajeVentaEvento");
+		layeredPane.add(panelPorcentajeVentaEvento, "name_242939977157100");
 
 		agregarTituloYSubtitulo(panelPorcentajeVentaEvento, "% Venta por Evento");
 
@@ -788,7 +912,7 @@ public class MenuOrganizador extends JFrame {
 		panelPorcentajeVentaLocalidad = new JPanel();
 		panelPorcentajeVentaLocalidad.setLayout(null);
 		panelPorcentajeVentaLocalidad.setBackground(new Color(10, 62, 114));
-		layeredPane.add(panelPorcentajeVentaLocalidad, "panelPorcentajeVentaLocalidad");
+		layeredPane.add(panelPorcentajeVentaLocalidad, "name_242939994485100");
 
 		agregarTituloYSubtitulo(panelPorcentajeVentaLocalidad, "% Venta por Localidad");
 
@@ -851,7 +975,7 @@ public class MenuOrganizador extends JFrame {
 		panelSugerirVenue = new JPanel();
 		panelSugerirVenue.setLayout(null);
 		panelSugerirVenue.setBackground(new Color(10, 62, 114));
-		layeredPane.add(panelSugerirVenue, "panelSugerirVenue");
+		layeredPane.add(panelSugerirVenue, "name_242940010700600");
 
 		agregarTituloYSubtitulo(panelSugerirVenue, "Sugerir Venue");
 
@@ -957,7 +1081,7 @@ public class MenuOrganizador extends JFrame {
 
 		JLabel sub = new JLabel(subtitulo);
 		sub.setForeground(Color.LIGHT_GRAY);
-		sub.setBounds(250, 59, 400, 26);
+		sub.setBounds(350, 51, 134, 26);
 		sub.setFont(new Font("Elephant", Font.PLAIN, 20));
 		panel.add(sub);
 	}
@@ -1081,5 +1205,14 @@ public class MenuOrganizador extends JFrame {
 		Login login = new Login();
 		login.setVisible(true);
 		this.dispose();
+	}
+	
+	private void refrescarPanelAplicarOferta() {
+	    cargarEventosOrganizador(comboEventosAplicarOferta);
+
+	    if (comboEventosAplicarOferta.getItemCount() > 0) {
+	        comboEventosAplicarOferta.setSelectedIndex(0);
+	        cargarLocalidadesEvento(comboEventosAplicarOferta, comboLocalidadesAplicarOferta);
+	    }
 	}
 }

@@ -11,6 +11,7 @@ import modelo.*;
 import Tiquetes.*;
 import Persistencia.*;
 
+
 public class MenuAdmin extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -152,7 +153,7 @@ public class MenuAdmin extends JFrame {
 		panelMenu.add(btnConsultas);
 		y += espaciado;
 
-		JButton btnGuardar = new JButton("💾 Guardar Datos");
+		JButton btnGuardar = new JButton("Guardar Datos");
 		btnGuardar.setFont(new Font("Elephant", Font.PLAIN, 13));
 		btnGuardar.setBackground(new Color(100, 200, 100));
 		btnGuardar.setBounds(10, y, 864, 35);
@@ -819,9 +820,34 @@ public class MenuAdmin extends JFrame {
 	private void guardarDatos() {
 		try {
 			PerUsuario.guardarUsuarios(new ArrayList<>(exec.Consola.usuariosGUI));
-			JOptionPane.showMessageDialog(this, "✓ Datos guardados correctamente.");
+			
+			 ArrayList<Tiquete> tiquetes = new ArrayList<>();
+
+		        for (Usuario u : exec.Consola.usuariosGUI) {
+		            if (u instanceof Cliente c) {
+		                tiquetes.addAll(c.getTiquetes());
+		            }
+		        }
+
+		        PerTiquete.guardarTiquetes(tiquetes);
+
+		        // 3. Guardar todas las transacciones (pagos)
+		        PerPago.guardarPagos(exec.Consola.adminGUI
+		                .getEstadosFinancieros()
+		                .getTransacciones());
+
+		        JOptionPane.showMessageDialog(
+		            this,
+		            "Datos guardados correctamente.",
+		            "Guardar Datos",
+		            JOptionPane.INFORMATION_MESSAGE
+		        );
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Error al guardar: " + e.getMessage());
+			JOptionPane.showMessageDialog(
+		            this,
+		            "Error al guardar datos:\n" + e.getMessage(),
+		            "Error",
+		            JOptionPane.ERROR_MESSAGE );
 		}
 	}
 
