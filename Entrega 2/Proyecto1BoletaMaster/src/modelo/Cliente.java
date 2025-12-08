@@ -1,13 +1,13 @@
 package modelo;
 
-import java.util.HashSet;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import Tiquetes.Tiquete;
-import Tiquetes.TiqueteSimple;
 import Tiquetes.TiqueteMultiple;
+import Tiquetes.TiqueteSimple;
 import Tiquetes.estadoTiquete;
 import pagos.Pago;
 import pagos.metodoPago;

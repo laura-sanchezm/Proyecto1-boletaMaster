@@ -1,6 +1,8 @@
 package pruebas;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -9,8 +11,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import Tiquetes.*;
-import modelo.*;
+import Tiquetes.Tiquete;
+import Tiquetes.TiqueteSimple;
+import Tiquetes.estadoTiquete;
+import modelo.Administrador;
+import modelo.Cliente;
+import modelo.Evento;
+import modelo.Localidad;
+import modelo.Organizador;
+import modelo.Venue;
 import pagos.metodoPago;
 
 public class TransferenciaTest {

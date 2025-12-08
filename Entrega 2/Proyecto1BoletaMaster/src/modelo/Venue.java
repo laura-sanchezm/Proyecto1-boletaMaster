@@ -1,7 +1,7 @@
 package modelo;
 
-import java.util.HashSet;
 import java.time.LocalDate;
+import java.util.HashSet;
 
 public class Venue {
 	

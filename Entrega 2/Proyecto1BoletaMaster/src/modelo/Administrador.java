@@ -1,10 +1,14 @@
 package modelo;
-import java.time.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashSet;
-import Tiquetes.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import Tiquetes.Tiquete;
+import Tiquetes.TiqueteMultiple;
+import Tiquetes.TiqueteSimple;
+import Tiquetes.estadoTiquete;
 
 public class Administrador extends Usuario{
 	

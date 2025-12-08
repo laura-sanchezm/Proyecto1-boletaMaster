@@ -1,13 +1,30 @@
 package gui;
 
 
+import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import java.awt.Color;
-import java.awt.CardLayout;
+
+import util.QRCodeGenerator;
 
 public class MenuCliente extends JFrame {
 
@@ -123,6 +140,9 @@ public class MenuCliente extends JFrame {
 		btnTiquetes.addActionListener(e -> {
 			actualizarTablaTiquetes();
 			mostrarPanel(panelTiquetesComprados);
+			
+		
+			
 		});
 		panelMenu.add(btnTiquetes);
 
@@ -765,60 +785,36 @@ public class MenuCliente extends JFrame {
 		}
 		
 		// Generar código QR
-		String datosQR = "Evento:" + tiquete.getEvento().getNombreE() + 
-						 "|ID:" + tiquete.getIdT() +
-						 "|F.Evento:" + tiquete.getEvento().getFecha() +
-						 "|F.Impresion:" + java.time.LocalDate.now();
-		
-		JLabel lblQR = new JLabel("QR");
-		lblQR.setBounds(550, 150, 200, 200);
+		// ========== GENERAR QR REAL ==========
+
+		// Crear payload con datos reales
+		String payload = QRCodeGenerator.buildPayload(
+		        tiquete.getEvento().getNombreE(),
+		        tiquete.getIdT(),
+		        tiquete.getEvento().getFecha(),
+		        java.time.LocalDateTime.now()
+		);
+
+		// Generar imagen de 300x300 px
+		BufferedImage qrImage = QRCodeGenerator.generate(payload, 300);
+
+		// Convertir a icono para mostrar en Swing
+		ImageIcon qrIcon = new ImageIcon(qrImage);
+
+		JLabel lblQR = new JLabel(qrIcon);
+		lblQR.setBounds(550, 150, 300, 300);
 		lblQR.setHorizontalAlignment(SwingConstants.CENTER);
 		lblQR.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-		
-		// Aquí se generaría el QR real con una librería
-		// Por ahora mostramos un placeholder
-		lblQR.setText("<html><div style='text-align:center'>" +
-					  "CÓDIGO QR<br><br>" +
-					  "<small>" + datosQR + "</small>" +
-					  "</div></html>");
-		lblQR.setVerticalAlignment(SwingConstants.CENTER);
+
 		panelTiquete.add(lblQR);
-		
+
 		// Footer
 		JLabel lblFooter = new JLabel("Este tiquete es válido solo para una entrada. No transferible una vez impreso.");
 		lblFooter.setFont(new Font("Arial", Font.ITALIC, 12));
 		lblFooter.setForeground(Color.GRAY);
 		lblFooter.setBounds(20, 500, 700, 20);
 		panelTiquete.add(lblFooter);
-		
+
 		ventanaImpresion.getContentPane().add(panelTiquete);
 		ventanaImpresion.setVisible(true);
-	}
-
-	private void recargarSaldo() {
-		String montoStr = JOptionPane.showInputDialog(this, "Monto a recargar:");
-		if (montoStr == null) return;
-
-		try {
-			double monto = Double.parseDouble(montoStr);
-			cliente.recargarSaldo(monto);
-			lblSaldo.setText(String.valueOf(cliente.consultarSaldo()));
-			JOptionPane.showMessageDialog(this, "Saldo recargado.");
-		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(this, "Monto inválido.");
-		}
-	}
-
-	private void salir() {
-		this.dispose();
-		new Login().setVisible(true);
-	}
-	    
-	private void mostrarPanel(JPanel panelMostrado) {
-		for(JPanel p : paneles) {
-			p.setVisible(false);
-		}
-		panelMostrado.setVisible(true);
-		panelMostrado.repaint();
-	}
-}
+}}

@@ -1,13 +1,14 @@
 package pagos;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+
 import Tiquetes.Tiquete;
-import java.util.ArrayList; 	
+import Tiquetes.TiqueteMultiple;
 import Tiquetes.TiqueteSimple;
 import Tiquetes.estadoTiquete;
-import Tiquetes.TiqueteMultiple;
-import modelo.Oferta;
 import modelo.Localidad;
+import modelo.Oferta;
 
 public class Pago {
 	

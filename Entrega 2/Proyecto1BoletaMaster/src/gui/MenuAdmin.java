@@ -1,15 +1,32 @@
 package gui;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-import javax.swing.*;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import modelo.*;
-import Tiquetes.*;
-import Persistencia.*;
+
+import Persistencia.PerPago;
+import Persistencia.PerTiquete;
+import Persistencia.PerUsuario;
+import Tiquetes.Tiquete;
+import modelo.Cliente;
+import modelo.Evento;
+import modelo.Usuario;
+import modelo.Venue;
 
 
 public class MenuAdmin extends JFrame {

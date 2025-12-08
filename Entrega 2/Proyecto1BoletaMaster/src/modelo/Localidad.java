@@ -1,9 +1,10 @@
 package modelo;
 
 import java.util.HashSet;
+import java.util.Random;
+
 import Tiquetes.Tiquete;
 import Tiquetes.TiqueteSimple;
-import java.util.Random;
 
 
 public class Localidad {

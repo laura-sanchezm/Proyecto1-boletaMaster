@@ -1,17 +1,37 @@
 package gui;
 
-import java.awt.*;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Random;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import java.util.List;
 
-import modelo.*;
-import Tiquetes.*;
+import Tiquetes.TiqueteMultiple;
+import Tiquetes.TiqueteSimple;
+import Tiquetes.estadoTiquete;
+import modelo.Evento;
+import modelo.Localidad;
+import modelo.Venue;
+import modelo.estadoEvento;
 
 public class MenuOrganizador extends JFrame {
 

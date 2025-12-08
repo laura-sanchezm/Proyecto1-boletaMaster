@@ -1,13 +1,15 @@
 package modelo;
 
-import java.util.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 import Tiquetes.Tiquete;
 import Tiquetes.TiqueteMultiple;
 import Tiquetes.TiqueteSimple;
 import Tiquetes.estadoTiquete;
-
-import java.time.*;
 
 public class Organizador extends Cliente{
 	

@@ -1,19 +1,32 @@
 package exec;
 
-import modelo.*;
-import pagos.*;
-import Tiquetes.*;
-import Persistencia.*;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.io.InputStreamReader;
 import java.io.BufferedReader;
-import java.util.Random;
+import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+
+import Persistencia.PerPago;
+import Persistencia.PerTiquete;
+import Persistencia.PerUsuario;
+import Tiquetes.PaqueteDeluxe;
+import Tiquetes.Tiquete;
+import Tiquetes.TiqueteMultiple;
+import Tiquetes.TiqueteSimple;
+import modelo.Administrador;
+import modelo.Cliente;
+import modelo.EstadosFinancieros;
+import modelo.Evento;
+import modelo.Localidad;
+import modelo.Organizador;
+import modelo.Usuario;
+import modelo.Venue;
+import modelo.estadoEvento;
+import pagos.metodoPago;
 
 
 public class Consola {

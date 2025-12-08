@@ -1,16 +1,18 @@
 package Persistencia;
 
-import modelo.Usuario;
-import modelo.Cliente;
-import modelo.Organizador;
-import modelo.Administrador;
-import modelo.Evento;
-import Tiquetes.Tiquete;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import Tiquetes.Tiquete;
+import modelo.Administrador;
+import modelo.Cliente;
+import modelo.Evento;
+import modelo.Organizador;
+import modelo.Usuario;
 
 public class PerUsuario {
 	
