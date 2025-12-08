@@ -9,7 +9,5 @@
 	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="lib" path="libs/org.json-1.6-20240205.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
-	<classpathentry kind="lib" path="libs/core-3.5.3.jar"/>
-	<classpathentry kind="lib" path="libs/javase-3.5.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

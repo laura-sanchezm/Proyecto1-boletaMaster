@@ -1,7 +1,31 @@
-[{
-    "password": "123",
-    "tipo": "cliente",
-    "saldo": 0,
-    "login": "rrr",
-    "tiquetes": []
-}]
+[
+    {
+        "password": "123",
+        "tipo": "cliente",
+        "saldo": 0,
+        "login": "rrr",
+        "tiquetes": []
+    },
+    {
+        "password": "10",
+        "tipo": "cliente",
+        "saldo": 2.0E9,
+        "login": "Santiago",
+        "tiquetes": []
+    },
+    {
+        "password": "DPOO",
+        "tipo": "administrador",
+        "cargoImpresion": 5,
+        "cargoServicio": 0.05,
+        "eventos": [95096],
+        "login": "ADMIN"
+    },
+    {
+        "password": "20",
+        "tipo": "organizador",
+        "idO": 43556,
+        "eventos": [95096],
+        "login": "carlos"
+    }
+]

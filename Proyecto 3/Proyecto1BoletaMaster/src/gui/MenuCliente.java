@@ -24,7 +24,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-
+import util.QRCodeGenerator;
 
 public class MenuCliente extends JFrame {
 
@@ -791,20 +791,12 @@ public class MenuCliente extends JFrame {
 		String payload = QRCodeGenerator.buildPayload(
 		        tiquete.getEvento().getNombreE(),
 		        tiquete.getIdT(),
-		        tiquete.getEvento().getFecha().toString(),
+		        tiquete.getEvento().getFecha(),
 		        java.time.LocalDateTime.now()
 		);
 
-		// Generar imagen de 150x150 px
-		BufferedImage qrImage;
-		try {
-		    qrImage = QRCodeGenerator.generate(payload, 150);
-		} catch (Exception ex) {
-		    JOptionPane.showMessageDialog(null, 
-		            "Error generando el QR: " + ex.getMessage());
-		    ex.printStackTrace();
-		    return; 
-		}
+		// Generar imagen de 300x300 px
+		BufferedImage qrImage = QRCodeGenerator.generate(payload, 300);
 
 		// Convertir a icono para mostrar en Swing
 		ImageIcon qrIcon = new ImageIcon(qrImage);
@@ -825,37 +817,4 @@ public class MenuCliente extends JFrame {
 
 		ventanaImpresion.getContentPane().add(panelTiquete);
 		ventanaImpresion.setVisible(true);
-		}
-	
-	private void mostrarPanel(JPanel panelMostrado) {
-		for(JPanel p : paneles) {
-			p.setVisible(false);
-		}
-		panelMostrado.setVisible(true);
-		panelMostrado.setBounds(0, 0, 884, 611);
-		panelMostrado.repaint();
-	}
-	
-	private void recargarSaldo() {
-		String montoStr = JOptionPane.showInputDialog(this, "Monto a recargar:");
-		if (montoStr == null) return;
-
-		try {
-			double monto = Double.parseDouble(montoStr);
-			cliente.recargarSaldo(monto);
-			lblSaldo.setText(String.valueOf(cliente.consultarSaldo()));
-			JOptionPane.showMessageDialog(this, "Saldo recargado.");
-		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(this, "Monto inválido.");
-		}
-	}
-
-	private void salir() {
-		this.dispose();
-		new Login().setVisible(true);
-	}
-	
-
-
-
-}
+}}
